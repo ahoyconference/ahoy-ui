@@ -40,6 +40,12 @@ if (navigator.mozGetUserMedia) {
     to.play();
   };
 
+  detachMediaStream = function(element) {
+    console.log("Detaching media stream");
+    element.pause();
+    element.mozSrcObject = null;
+  };
+
   // Fake get{Video,Audio}Tracks
   MediaStream.prototype.getVideoTracks = function() {
     return [];
@@ -71,6 +77,11 @@ if (navigator.mozGetUserMedia) {
 
   reattachMediaStream = function(to, from) {
     to.src = from.src;
+  };
+
+  detachMediaStream = function(element) {
+    element.pause();
+    element.src = null;
   };
 
   // The representation of tracks in a stream is changed in M26.

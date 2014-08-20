@@ -153,6 +153,7 @@ angular.module('ahoyApp.controllers', [])
     }
     
     $scope.next = function() {
+	detachMediaStream(localVideo);
 	if (ahoyService.isTransmitOnly()) {
 	    $state.transitionTo("transmit");
 	} else {
