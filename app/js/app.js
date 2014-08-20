@@ -6,6 +6,7 @@ angular.module('ahoyApp', [
   'ahoyApp.controllers',
   'ui.router',
   'ui.bootstrap',
+  'timer',
   'ngAnimate'
 ])
 

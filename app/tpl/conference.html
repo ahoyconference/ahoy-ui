@@ -36,8 +36,13 @@
 	    </div>
 	</div>
 	<div class="col-md-5"  ng-controller="ChatCtrl">
+	    <div class="row-fluid" ng-hide="endsAt == 0">
+		<div class="col-md-12 well" style="margin-left: 5px; margin-bottom: 5px;">
+		    <timer ng-attr-end-time="endsAt" max-time-unit="hour" interval="1000">Conference ends in {{hours}} hours, {{minutes}} minutes, {{seconds}} seconds</timer>
+		</div>
+	    </div>
 	    <div class="row-fluid">
-		<div id="chatMessages" class="col-md-12 well" style="overflow-y: scroll; height: 450px; padding: 0px; padding-left: 5px; margin-left: 5px;">
+		<div id="chatMessages" class="col-md-12 well" ng-style="chatMessagesStyle">
 		    <div ng-repeat="message in messages track by $index">
 			<strong>{{message.from}}</strong>
 			{{message.text}}

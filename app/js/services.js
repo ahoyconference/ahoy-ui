@@ -367,6 +367,13 @@ angular.module('ahoyApp.services', [])
 		    preferences.speaker = msg.speaker;
 		    preferences.moderator = msg.moderator;
 		    speakerID = msg.speakerID;
+		    
+		    if (msg.remainingSeconds > 0) {
+			var nowDate = new Date();
+			preferences.endDate = new Date((msg.remainingSeconds * 1000) + nowDate.getTime());
+		    } else {
+		        preferences.endDate = null;
+		    }
 
 		    for (var key in msg.members) {
 			members[msg.members[key].memberID] = msg.members[key];
@@ -804,6 +811,14 @@ angular.module('ahoyApp.services', [])
 	ws.send(JSON.stringify({messageType:"CONFERENCE_KICK_request", memberID: member.memberID, transactionID: generateTransactionID()}));
     }
       
+
+    this.getEndsAt = function() {
+	if (preferences.endDate) {
+	    return preferences.endDate.getTime();
+	} else {
+	    return 0;
+	}
+    }
     
     this.showErrorDialog = function(scope, title, message) {
 	window.modal = $modal;

@@ -189,7 +189,18 @@ angular.module('ahoyApp.controllers', [])
     $scope.bigScreenMirror = true;
     $scope.localMember = ahoyService.getLocalMember();;
     $scope.members = ahoyService.getMembers();
+    $scope.endsAt = ahoyService.getEndsAt();
 
+    $scope.$on('timer-stopped', function (event, data){
+	$scope.leaveConference();
+    });
+    
+    $scope.chatMessagesStyle = {"overflow-y": "scroll", "padding": "0px", "padding-left": "5px", "margin-left": "5px"};
+    if ($scope.endsAt > 0) {
+	$scope.chatMessagesStyle.height = "390px";
+    } else {
+	$scope.chatMessagesStyle.height = "450px";
+    }
     window.postMessage({ type: "FROM_PAGE", payload: {event: "joinedConference", wsUrl: preferences.wsUrl, room: preferences.room, name: preferences.name, password: preferences.password}}, "*");
 
     // handle communication with  content scripts (injected by the chrome extensions)
