@@ -1,0 +1,56 @@
+<div class="row" style="padding-top: 40px;"">
+    <div class="col-md-4 col-md-offset-4">
+	<div class="panel panel-default">
+	    <div class="panel-heading">
+		<h3 class="panel-title">Start a new conference</h3>
+	    </div>
+	    <div class="panel-body">
+	      <form name="form" novalidate class="css-form" ng-submit="startConference()">
+		<fieldset>
+		<div class="form-group">
+		    <label for="name-input" class="control-label">Your name</label>
+	    	    <input type="text" class="form-control name-input" placeholder="What's your name?" ng-model="name" required autofocus>
+		</div>
+		<div class="form-group">
+		    <label for="room-input" class="control-label">Conference Room</label>
+	    	    <input type="text" class="form-control room-input" placeholder="Optional room name" ng-model="room">
+		</div>
+		<div class="alert alert-danger ng-hide" ng-show="roomExists">
+		    Conference room exists
+		</div>
+		<div class="form-group">
+		    <label for="password-input" class="control-label">Password</label>
+		    <input type="password" class="form-control password-input" placeholder="Optional password" ng-model="password">
+		</div>
+		<div class="form-group">
+		    <label for="password-input" class="control-label">Moderator Password</label>
+		    <input type="password" class="form-control moderator-password-input" placeholder="Optional moderator password" ng-model="moderatorpassword">
+		</div>
+		<div class="form-group">
+		    <button class="btn btn-primary btn-block" ng-disabled="form.$invalid">Start</button>
+		</div>
+		</fieldset>
+	      <p class="text-center"><a href="#join">or join an existing conference</a></p>
+	      </form>
+	    </div>
+	</div>
+    </div>
+</div>
+<div class="modal modal-static fade" id="loginErrorDialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	    <div class="modal-content">
+		<div class="modal-header">
+    		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    		    <h4 class="modal-title">Whoopsie...</h4>
+    		 </div>
+    		 <div class="modal-body">
+		    <p>That didn't work out. Email and password do not match.</p>
+    		</div>
+    		<div class="mo
+    		dal-footer">
+		    <input type="hidden" class="modal-data-id" name="id" value=""/>
+    		    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+    		</div>
+	    </div>
+	</div>
+</div>

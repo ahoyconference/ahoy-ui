@@ -1,0 +1,121 @@
+/* app css stylesheet */
+
+.slide.ng-leave {
+  position: relative;
+}
+.slide.ng-enter {
+  position: absolute;
+}
+.slide.ng-enter, .slide.ng-leave {
+  -webkit-transition: -webkit-transform 0.3s ease-in, opacity 0.3s ease-in;
+     -moz-transition: -moz-transform 0.3s ease-in, opacity 0.3s ease-in;
+       -o-transition: -o-transform 0.3s ease-in, opacity 0.3s ease-in;
+          transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+.slide.ng-enter, .slide.ng-leave.ng-leave-active {
+  -webkit-transform: scaleX(0.0001);
+       -o-transform: scaleX(0.0001);
+          transform: scaleX(0.0001);
+  opacity: 0;
+}
+.slide, .slide.ng-enter.ng-enter-active {
+  -webkit-transform: scaleX(1);
+       -o-transform: scaleX(1);
+          transform: scaleX(1);
+  opacity: 1;
+}
+
+.css-form input.ng-invalid.ng-dirty {
+  background-color: #FA787E;
+}
+
+.menubar {
+    margin-bottom: 5px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-right: 10px;
+    background: #005c97;
+    color: #fcfcfc;
+}
+
+.nav li a {
+    color: #fcfcfc;
+}
+
+.nav li a:hover {
+    background: #005c97;
+    color: #aaaaaa;
+}
+
+.navbar-brand {
+    color: #fcfcfc;
+}
+
+.navbar-brand:hover{
+    color: #fcfcfc;
+}
+
+.chatbox {
+    width: 100%;
+    height: 480px;
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.mirror
+{
+  -moz-transform: scaleX(-1);    /* Gecko */  
+  -o-transform: scaleX(-1);      /* Operah */  
+  -webkit-transform: scaleX(-1); /* webkit */  
+  transform: scaleX(-1);         /* standard */  
+  filter: FlipH;                 /* IE 6/7/8 */
+}
+
+.video_overlay_big {
+    position: absolute;
+    width: 100%;
+    z-index:300000;
+}
+
+.video_box_small {
+//    border: 1px solid;
+    margin: 0px;
+    padding: 0px;
+    margin-right: 10px;
+    width: 160px;
+    z-index:300000;
+}
+
+.video_overlay_small {
+    position:absolute;
+    width: 160px;
+    height: 120px;
+    z-index:300000;
+}
+
+.video_overlay_opacity {
+    opacity: 0.8;       /* modern browser */  
+    -moz-opacity: 0.2;  /* older Mozilla browser */  
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)"; /* IE8 in Standard Compliant Mode */  
+    filter:alpha(opacity=20); /* IE5.x -7.0 */  
+}
+
+.wrapper-16-by-9 {
+	position: relative;
+	padding-bottom: 56.25%;
+	height: 0;
+}
+.wrapper-4-by-3 {
+	position: relative;
+	padding-bottom: 75%;
+	height: 0;
+}
+
+.element-with-aspect-ratio {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
