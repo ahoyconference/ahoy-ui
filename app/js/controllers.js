@@ -32,6 +32,8 @@ angular.module('ahoyApp.controllers', [])
 	        $scope.$apply(function() {
 	          $scope.password = "";
 	        });
+	    } else if (status == 486) {
+		ahoyService.showErrorDialog($scope, "Conference full", "Sorry, the conference room is full.");
 	    } else if (reconnect) {
 	      console.log("please reconnect");
 	      $timeout(function() {
@@ -457,7 +459,7 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.showConferenceLink = function() {
 	console.log("showConferenceLink");
-	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("conference")) + "join/" + $scope.preferences.room;
+	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + $scope.preferences.room;
 	var modalInstance = $modal.open({
 	    templateUrl: 'tpl/showLinkModal.html',
 	    size: "lg",
