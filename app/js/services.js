@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ahoyApp.services', [])
-    .service('ahoyService', ["$modal", function($modal) {
+    .service('ahoyService', ["$modal", "$timeout", function($modal, $timeout) {
       var self = this;
       var activeConference = false;
       var activeMedia = false;
@@ -141,7 +141,13 @@ angular.module('ahoyApp.services', [])
 			    sessionDescription.sdp = processSdp(sessionDescription.sdp);
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    peer_connection.onicecandidate = function(event) {
+					if (!event.candiate) {
+					    $timeout(function() {
+						ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+					    }, 500);
+					}
+				    }
 				},
 				function() {
 				    console.log("setLocalSessionDescription: ERROR");
@@ -165,7 +171,9 @@ angular.module('ahoyApp.services', [])
 			function(sessionDescription) { 
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    $timeout(function() {
+					ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    }, 500);
 				},
 				function() {
 				    console.log("setLocalSessionDescription: ERROR");
