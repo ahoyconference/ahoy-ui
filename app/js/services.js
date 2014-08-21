@@ -142,7 +142,7 @@ angular.module('ahoyApp.services', [])
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
 				    peer_connection.onicecandidate = function(event) {
-					if (!event.candiate) {
+					if (!event.candidate) {
 					    $timeout(function() {
 						ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
 					    }, 500);
@@ -171,9 +171,13 @@ angular.module('ahoyApp.services', [])
 			function(sessionDescription) { 
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    $timeout(function() {
-					ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-				    }, 500);
+				    peer_connection.onicecandidate = function(event) {
+					if (!event.candidate) {
+					    $timeout(function() {
+						ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+					    }, 500);
+					}
+				    }
 				},
 				function() {
 				    console.log("setLocalSessionDescription: ERROR");
