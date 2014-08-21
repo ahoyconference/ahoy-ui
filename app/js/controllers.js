@@ -179,7 +179,6 @@ angular.module('ahoyApp.controllers', [])
       }, 1);
     }
 
-
     var preferences = ahoyService.getPreferences();
     $scope.sharingCameraControl = false;
     $scope.sharingMic = ahoyService.sharingAudio();
@@ -606,6 +605,13 @@ angular.module('ahoyApp.controllers', [])
           break;
       }
     });
+
+    function scopeApply() {
+      $timeout(function() {
+        $scope.$apply(function() {
+        });
+      }, 1);
+    }
 
     ahoyService.registerScopeListener(function(msg) {
 	scopeApply();
