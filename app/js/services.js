@@ -303,7 +303,7 @@ angular.module('ahoyApp.services', [])
             /* the current speaker left, or we were staring at ourself and somebody joined */
             newSpeakerID = null;
             for (var key in members) {
-        	if ((members[key] != localMember) && (members[key].audio.available)) {
+        	if (members[key] && (members[key] != localMember) && members[key].audio && members[key].audio.available) {
         	  newSpeakerID = members[key].memberID;
         	  break;
         	}
@@ -484,6 +484,7 @@ angular.module('ahoyApp.services', [])
 		  }
 		  var call_peer_sdp = unescape(msg.sdp);
 		  console.log("SDP_request: "+call_peer_sdp);
+		  
 		  members[msg.member.memberID].peerConnection= createPeerConnection(msg.member.memberID);
 		  createSdpAnswer(members[msg.member.memberID].peerConnection, msg.transactionID, call_peer_sdp);
 		  break;
