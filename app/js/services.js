@@ -89,7 +89,7 @@ angular.module('ahoyApp.services', [])
 		    peer_connection = new RTCPeerConnection();
 		} else {
 		    var pc_config = null;
-		    var pc_constraints = {"optional": [{"DtlsSrtpKeyAgreement": true}]};
+		    var pc_constraints = {"optional": [{"DtlsSrtpKeyAgreement": true}, {"googCpuOveruseDetection": true}]};
 		    peer_connection = new RTCPeerConnection(pc_config, pc_constraints);
 		}
 		if (peer_connection == null) {
