@@ -73,7 +73,6 @@ angular.module('ahoyApp.services', [])
             for (var i = 0; i < lines.length; i++) {
                 if (lines[i].indexOf("=crypto") > 0) {
             	    /* no SDES, DTLS all the way */
-                } else if ((lines[i].indexOf("a=candidate") != -1) && (lines[i].indexOf(" tcp ") != -1) && (webrtcDetectedBrowser == "chrome")) {
                 } else {
                     /* keep the rest */
                     sdp[sdp_idx++] = lines[i];
