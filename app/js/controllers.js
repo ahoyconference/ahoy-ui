@@ -353,66 +353,14 @@ angular.module('ahoyApp.controllers', [])
 	scopeApply();
     });
 
+
+    $scope.putOnBigScreen = function(memberID) {
+	console.log("$scope.putOnBigScreen: "+memberID);
+	putOnBigScreen(memberID);
+    }
+
     var bigScreenMemberID = "";
     var bigScreen = document.getElementById('bigScreen');
-    
-    window.requestAnimFrame = (function(){
-	    return  window.requestAnimationFrame       ||
-		    window.webkitRequestAnimationFrame ||
-		    window.mozRequestAnimationFrame    || 
-		    function( callback ){
-			window.setTimeout(callback, 1000 / 10);
-		    };
-    })();
-
-
-    function drawBigScreen(time) {
-	bigScreenCanvas.width = bigScreenCanvas.clientWidth;
-	bigScreenCanvas.height = bigScreenCanvas.clientHeight;
-
-	var video_ar = bigScreenVideo.videoWidth / bigScreenVideo.videoHeight;
-	var canvas_ar = bigScreenCanvas.width / bigScreenCanvas.height;
-	var offset_x = (bigScreenCanvas.width - (bigScreenCanvas.width / (canvas_ar / video_ar))) / 2;
-	var offset_y = 0;
-	var height = bigScreenCanvas.height;
-	var width = (bigScreenCanvas.width / canvas_ar) * video_ar;
-    
-	if (screenfull.isFullscreen) {
-	    if (canvas_ar <= video_ar) {
-		/* video is wider than canvas, make video 100% wide */
-		height = (bigScreenCanvas.height / video_ar) * canvas_ar;
-		width = height * video_ar;
-		offset_x = 0;
-		offset_y = (bigScreenCanvas.height - height) / 2;
-	    } else {
-		/* canvas is wider than the video, make video 100% high */
-		width = (bigScreenCanvas.width / canvas_ar) * video_ar;
-		height = width / video_ar
-		offset_x = (bigScreenCanvas.width - width) / 2;
-		offset_y = 0;
-	    }
-	}
-
-	if (bigScreenClear) {
-	    bigScreenClear = false;
-	    bigScreenContext.clearRect( 0 , 0 , bigScreenCanvas.width, bigScreenCanvas.height);
-	}
-	bigScreenContext.drawImage(bigScreenVideo, offset_x, offset_y, width, height);
-	if (bigScreenAnimating) {
-//	    requestAnimFrame(drawBigScreen);
-	    // use a 30ms timeout instead of requestAnimFrame (which tries to achieve 60fps and burns lots of cpu for our 30fps video...)
-	    window.setTimeout(drawBigScreen, 1000 / 30);
-	}
-    }
-    
-    var bigScreenCanvas = document.getElementById('bigScreenCanvas');
-    var bigScreenContext = bigScreenCanvas.getContext('2d');
-    var bigScreenVideo = null;
-    var bigScreenAnimating = false;
-    var bigScreenClear = false;
-    bigScreenCanvas.width = bigScreenCanvas.clientWidth;
-    bigScreenCanvas.height = bigScreenCanvas.clientHeight;
-    
     
     function putOnBigScreen(memberID) {
       if (bigScreenMemberID == memberID) {
@@ -426,14 +374,9 @@ angular.module('ahoyApp.controllers', [])
       var member = ahoyService.getMember(memberID);
       if (member.stream) {
         console.log("putting "+member.name+" on the big screen");
-
+        attachMediaStream(bigScreen, member.stream, true);
+	
         $timeout(function() {
-    	  bigScreenVideo = document.getElementById("video-"+member.memberID);
-	  bigScreenClear = true;
-	  if (!bigScreenAnimating) {
-	    bigScreenAnimating = true;
-    	    requestAnimFrame(drawBigScreen);
-    	  }
           $scope.$apply(function() {
             $scope.bigScreenName = member.name;
 	    $scope.bigScreenMirror = mirror;
@@ -443,18 +386,11 @@ angular.module('ahoyApp.controllers', [])
       bigScreenMemberID = memberID;
     }
 
-    $scope.putOnBigScreen = function(memberID) {
-	console.log("$scope.putOnBigScreen: "+memberID);
-	putOnBigScreen(memberID);
-    }
 
     $scope.fullscreen = function() {
 	if (screenfull.enabled) {
-    	    document.addEventListener(screenfull.raw.fullscreenchange, function () {
-    		bigScreenClear = true;
-    	    });
-	    screenfull.request(bigScreenCanvas);
-	}
+    	    screenfull.request(bigScreen);
+        }
     }
     
     $scope.showConferenceLink = function() {

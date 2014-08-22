@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ahoyApp.services', [])
-    .service('ahoyService', ["$modal", "$timeout", function($modal, $timeout) {
+    .service('ahoyService', ["$modal", function($modal) {
       var self = this;
       var activeConference = false;
       var activeMedia = false;
@@ -73,7 +73,7 @@ angular.module('ahoyApp.services', [])
             for (var i = 0; i < lines.length; i++) {
                 if (lines[i].indexOf("=crypto") > 0) {
             	    /* no SDES, DTLS all the way */
-//                } else if ((lines[i].indexOf("a=candidate") != -1) && (lines[i].indexOf(" udp ") != -1) && (webrtcDetectedBrowser == "chrome")) {
+                } else if ((lines[i].indexOf("a=candidate") != -1) && (lines[i].indexOf(" tcp ") != -1) && (webrtcDetectedBrowser == "chrome")) {
                 } else {
                     /* keep the rest */
                     sdp[sdp_idx++] = lines[i];
@@ -143,9 +143,7 @@ angular.module('ahoyApp.services', [])
 				function() {
 				    peer_connection.onicecandidate = function(event) {
 					if (!event.candidate) {
-					    $timeout(function() {
-						ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-					    }, 500);
+					    ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
 					}
 				    }
 				},
@@ -173,9 +171,7 @@ angular.module('ahoyApp.services', [])
 				function() {
 				    peer_connection.onicecandidate = function(event) {
 					if (!event.candidate) {
-					    $timeout(function() {
-						ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-					    }, 500);
+					    ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
 					}
 				    }
 				},
@@ -246,7 +242,8 @@ angular.module('ahoyApp.services', [])
     	    preferences.shareVideo = false;
     	    var mediaConstraints = {audio: audio}
 	    if (video) {
-		mediaConstraints.video = {mandatory: { minWidth: 640, maxWidth: 640, minHeight: 360, maxHeight: 360}, optional: []};
+		// mediaConstraints.video = {mandatory: { minWidth: 640, maxWidth: 640, minHeight: 360, maxHeight: 360}, optional: []};
+		mediaConstraints.video = true;
     		if (preferences.captureHdVideo) {
 		    mediaConstraints.video = {mandatory: { minWidth: 1280, maxWidth: 1280, minHeight: 720, maxHeight: 720}, optional: []};
 		}
