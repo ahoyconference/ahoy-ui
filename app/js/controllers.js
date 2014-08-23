@@ -32,6 +32,8 @@ angular.module('ahoyApp.controllers', [])
 	        $scope.$apply(function() {
 	          $scope.password = "";
 	        });
+	    } else if (status == 470) {
+		ahoyService.showErrorDialog($scope, "Conference locked", "Sorry, the conference room has been locked by a moderator.");
 	    } else if (status == 486) {
 		ahoyService.showErrorDialog($scope, "Conference full", "Sorry, the conference room is full.");
 	    } else if (reconnect) {
@@ -291,6 +293,10 @@ angular.module('ahoyApp.controllers', [])
     $scope.leaveConference = function() {
       ahoyService.leaveConference();
       $state.transitionTo('start');
+    }
+    
+    $scope.toggleConferenceLock = function() {
+      ahoyService.lockConference(!$scope.preferences.conferenceLocked);
     }
 
     $scope.mouseEnter = function(member) {

@@ -374,6 +374,7 @@ angular.module('ahoyApp.services', [])
 		    preferences.password = password;
 		    preferences.speaker = msg.speaker;
 		    preferences.moderator = msg.moderator;
+		    preferences.conferenceLocked = msg.locked;
 		    speakerID = msg.speakerID;
 		    
 		    if (msg.remainingSeconds > 0) {
@@ -425,6 +426,16 @@ angular.module('ahoyApp.services', [])
 		case "CONFERENCE_KICK_indication":
 		  document.location.reload();
 		  break;
+	        case "CONFERENCE_LOCK_indication":
+	    	  preferences.conferenceLocked = msg.locked;
+	          if (scopeListener != null) {
+	    	    scopeListener();
+	          }
+	            if (statusMessageListener != null) {
+	              var event = {text: "The conference has been "+(msg.locked?"locked":"unlocked")+"."};
+	    	      statusMessageListener(event);
+	            }
+	    	  break;
 		case "MEDIA_RECEIVE_request":
 		  var call_peer_sdp = unescape(msg.sdp);
 		  localMember.peerConnection = createPeerConnection(null);
@@ -778,6 +789,10 @@ angular.module('ahoyApp.services', [])
 
     this.destroyConference = function() {
 	ws.send(JSON.stringify({messageType:"CONFERENCE_DESTROY_request", transactionID: generateTransactionID()}));
+    }
+
+    this.lockConference = function(lock) {
+	ws.send(JSON.stringify({messageType:"CONFERENCE_LOCK_request", lock: lock, transactionID: generateTransactionID()}));
     }
 
     this.registerChatMessageListener = function(callback) {

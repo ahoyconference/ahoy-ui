@@ -7,6 +7,7 @@
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingCameraControl]" ng-click="toggleCameraControl()" ng-hide="!localMember.haveCameraControl">{{!sharingCameraControl && 'Allow' || 'Disallow'}} camera control</button>
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingMic]" ng-click="toggleMuteMic()" ng-hide="!sharingMic || (webrtcDetectedBrowser != 'chrome')">{{!mutingMic && 'Mute' || 'Unmute'}} microphone</button>
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingCam]" ng-click="toggleMuteCam()" ng-hide="!sharingCam || (webrtcDetectedBrowser != 'chrome')">{{!mutingCam && 'Mute' || 'Unmute'}} camera</button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[preferences.conferenceLocked]" ng-click="toggleConferenceLock()" ng-hide="!localMember.moderator">{{preferences.conferenceLocked && 'Unlock' || 'Lock'}}</button>
     	    <button class="btn btn-default btn-primary navbar-btn" ng-click="leaveConference()">Exit</button>
     	  </div>
 	</div>
