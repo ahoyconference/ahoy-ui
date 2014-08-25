@@ -36,6 +36,11 @@ angular.module('ahoyApp.controllers', [])
 		ahoyService.showErrorDialog($scope, "Conference locked", "Sorry, the conference room has been locked by a moderator.");
 	    } else if (status == 486) {
 		ahoyService.showErrorDialog($scope, "Conference full", "Sorry, the conference room is full.");
+	    } else if (status == 302) {
+	      console.log("redirecting...");
+	      $timeout(function() {
+	        $scope.joinConference();
+	      }, 500);
 	    } else if (reconnect) {
 	      console.log("please reconnect");
 	      $timeout(function() {
@@ -49,11 +54,27 @@ angular.module('ahoyApp.controllers', [])
     
   }])
 
-  .controller('StartCtrl', ['$scope', '$state', '$stateParams', 'ahoyService', function($scope, $state, $stateParams, ahoyService) {
+  .controller('StartCtrl', ['$scope', '$timeout', '$state', '$stateParams', 'ahoyService', function($scope, $timeout, $state, $stateParams, ahoyService) {
     console.log('StartCtrl');
     if (ahoyService.inConference() == true) {
       $state.transitionTo('conference');
       return;
+    }
+
+    $scope.joinConference = function() {
+	ahoyService.joinConference($scope.room, $scope.name, $scope.password, false, false,
+	    function(ws, speaker) {
+	        $state.transitionTo('mediasharing');
+	    },
+	    function(status, reconnect) {
+		if (status == 302) {
+	    	    console.log("redirecting...");
+	    	    $timeout(function() {
+	    	        $scope.joinConference();
+	    	    }, 500);
+		}
+	    }
+	);
     }
 
     $scope.startConference = function() {
@@ -70,13 +91,7 @@ angular.module('ahoyApp.controllers', [])
 		    }
 		}
 	    });
-	    ahoyService.joinConference($scope.room, $scope.name, $scope.password, false, false,
-		function(ws, speaker) {
-		    $state.transitionTo('mediasharing');
-		},
-		function(status, reconnect) {
-		}
-	    );
+	    $scope.joinConference();
 	  },
 	  function(status) {
 	    console.log("no!");

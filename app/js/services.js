@@ -32,15 +32,20 @@ angular.module('ahoyApp.services', [])
 
       var ws = null;
       var wsUrl;
-      if (document.location.href.indexOf("ttp://") > 0) {
-        wsUrl = "ws://"+document.location.href.substring(7, document.location.href.indexOf("/", 7));
-      } else if (document.location.href.indexOf("ttps://") > 0) {
-        wsUrl = "wss://"+document.location.href.substring(8, document.location.href.indexOf("/", 8));
+
+      function resetWsUrl() {
+        if (document.location.href.indexOf("ttp://") > 0) {
+	    wsUrl = "ws://"+document.location.href.substring(7, document.location.href.indexOf("/", 7));
+	} else if (document.location.href.indexOf("ttps://") > 0) {
+    	    wsUrl = "wss://"+document.location.href.substring(8, document.location.href.indexOf("/", 8));
+        }
+
+	preferences.wsUrl = wsUrl;
+        console.log('ahoyService: '+wsUrl);
       }
 
-      preferences.wsUrl = wsUrl;
-      console.log('ahoyService: '+wsUrl);
-
+      resetWsUrl();
+      
 	function sendMediaRequest(members) {
 	    var request_members = Array();
 	    if ((members == null) || (members.length == 0)) return;
@@ -344,6 +349,7 @@ angular.module('ahoyApp.services', [])
 	    } 
 
 	   ws.onclose = function(error){
+	     resetWsUrl();
 	     if (activeConference) {
 	       for (var memberID in members) {
 		  if (members[memberID] != null) {
@@ -416,7 +422,14 @@ angular.module('ahoyApp.services', [])
 		    } else {
 		      successCallback(ws, msg.speaker);
 		    }
+		  } else if (msg.status == 302) {
+		    wsUrl = msg.url;
+		    ws.onclose = null;
+		    ws.close();
+		    ws = null;
+		    errorCallback(msg.status, true);
 		  } else {
+		    resetWsUrl();
 		    activeConference = false;
 		    ws.close();
 		    ws = null;
@@ -785,6 +798,7 @@ angular.module('ahoyApp.services', [])
     	  ws.close();
     	  ws = null;
         }
+        resetWsUrl();
       }
 
     this.destroyConference = function() {
