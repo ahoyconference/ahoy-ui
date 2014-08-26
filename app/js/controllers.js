@@ -602,7 +602,8 @@ console.log("bw: "+$scope.bandwidth);
         }
     }
 
-    ahoyService.joinConference($scope.room, $scope.name, "", false, false,
+    $scope.joinConference = function() {
+      ahoyService.joinConference($scope.room, $scope.name, null, false, false,
 	  function(ws, speaker) {
 	    window.onbeforeunload = function() {
 		ahoyService.leaveConference();
@@ -610,10 +611,20 @@ console.log("bw: "+$scope.bandwidth);
 	    ahoyService.subscribeMedia();
 	  },
 	  function(status, reconnect) {
-	    window.onbeforeunload = null;
-	    console.log("onerror: "+status+" "+reconnect);
+	    if (status == 302) {
+	      console.log("redirecting...");
+	      $timeout(function() {
+	        $scope.joinConference();
+	      }, 500);
+	    } else {
+	      window.onbeforeunload = null;
+	      console.log("onerror: "+status+" "+reconnect);
+	    }
 	  }
-    )
+      );
+    }
+    
+    $scope.joinConference();
     
   }])
 
