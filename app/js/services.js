@@ -428,6 +428,7 @@ angular.module('ahoyApp.services', [])
 		    }
 		  } else if (msg.status == 302) {
 		    wsUrl = msg.url;
+		    preferences.wsUrl = wsUrl;
 		    ws.onclose = null;
 		    ws.close();
 		    ws = null;
