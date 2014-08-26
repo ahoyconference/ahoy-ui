@@ -14,6 +14,15 @@
 		    <button class="btn pull-right" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingMic]" ng-click="toggleShareMic()" ng-disabled="requestingMedia">{{!sharingMic && 'Enable' || 'Disable'}} microphone</button>
 		</div>
 		<span><br><br></span>
+        	<select style="width: 100%;" chosen disable-search="true" ng-model="bandwidth" data-placeholder="Internet connection uplink speed">
+        	    <option value=""></option>
+    		    <option value="1000">fast (cable, vdsl, fibre more than 1.0 Mbit/s)</option>
+        	    <option value="500">standard (cable, adsl less than 1.0 Mbit/s)</option>
+        	    <option value="250">slow (adsl, mobile less than 0.5 Mbit/s)</option>
+            	</select>
+
+
+		<span><br><br></span>
 		<a class="btn btn-primary btn-block" ng-click="next()"  ng-disabled="requestingMedia">Next</a>
 		</fieldset>
 	    </div>

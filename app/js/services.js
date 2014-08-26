@@ -239,6 +239,10 @@ angular.module('ahoyApp.services', [])
     	}
         preferences.muteVideo = mute;
       }
+      
+      this.setMaxVideoBitrate = function(bitrate) {
+        preferences.maxVideoBitrate = bitrate;
+      }
 
       this.shareMedia = function(audio, video, successCallback, errorCallback) {
         if (audio || video) {
@@ -451,6 +455,7 @@ angular.module('ahoyApp.services', [])
 	    	  break;
 		case "MEDIA_RECEIVE_request":
 		  var call_peer_sdp = unescape(msg.sdp);
+		  console.log("MEDIA_RECEIVE_request: "+call_peer_sdp);
 		  localMember.peerConnection = createPeerConnection(null);
 		  localMember.peerConnection.addStream(localMember.stream);
 		  createSdpAnswer(localMember.peerConnection, msg.transactionID, call_peer_sdp);
@@ -507,7 +512,6 @@ angular.module('ahoyApp.services', [])
 		    members[msg.member.memberID].peerConnection = null;
 		  }
 		  var call_peer_sdp = unescape(msg.sdp);
-		  console.log("SDP_request: "+call_peer_sdp);
 		  
 		  members[msg.member.memberID].peerConnection= createPeerConnection(msg.member.memberID);
 		  createSdpAnswer(members[msg.member.memberID].peerConnection, msg.transactionID, call_peer_sdp);

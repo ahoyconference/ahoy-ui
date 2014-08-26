@@ -113,12 +113,18 @@ angular.module('ahoyApp.controllers', [])
       return;
     }
 
+    $scope.bandwidth = 500;
+
     var localVideo = document.getElementById('localVideo');
     $scope.sharingMic = ahoyService.sharingAudio();
     $scope.sharingCam = ahoyService.sharingVideo();
+    
+    $scope.$watch("bandwidth", function(newValue, oldValue) {
+	ahoyService.setMaxVideoBitrate(parseInt(newValue));
+    });
 
 
-    var shareMedia = function(audio, video) {
+    $scope.shareMedia = function(audio, video) {
       $scope.requestingMedia = true;
 	ahoyService.shareMedia(audio, video,
 	  function(stream) {
@@ -146,7 +152,7 @@ angular.module('ahoyApp.controllers', [])
 	    if (audio && video) {
 		/* try again with just audio */
 		video = false;
-		shareMedia(audio, video);
+		$scope.shareMedia(audio, video);
 	    } else {
     	      $scope.$apply(function() {
 	        $scope.requestingMedia = false;
@@ -162,14 +168,16 @@ angular.module('ahoyApp.controllers', [])
     }
 
     $scope.toggleShareMic = function() {
-	shareMedia(!ahoyService.sharingAudio(), ahoyService.sharingVideo());
+	$scope.shareMedia(!ahoyService.sharingAudio(), ahoyService.sharingVideo());
     }
 
     $scope.toggleShareCam = function() {
-	shareMedia(ahoyService.sharingAudio(), !ahoyService.sharingVideo());
+	$scope.shareMedia(ahoyService.sharingAudio(), !ahoyService.sharingVideo());
     }
     
     $scope.next = function() {
+
+console.log("bw: "+$scope.bandwidth);
 	detachMediaStream(localVideo);
 	if (ahoyService.isTransmitOnly()) {
 	    $state.transitionTo("transmit");
@@ -178,7 +186,7 @@ angular.module('ahoyApp.controllers', [])
 	}
     }
     
-    shareMedia(true, true);
+    $scope.shareMedia(true, true);
   }])
 
   .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', 'ahoyService', function($scope, $state, $stateParams, $timeout, $modal, ahoyService) {

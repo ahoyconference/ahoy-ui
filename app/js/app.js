@@ -7,7 +7,8 @@ angular.module('ahoyApp', [
   'ui.router',
   'ui.bootstrap',
   'timer',
-  'ngAnimate'
+  'ngAnimate',
+  'localytics.directives'
 ])
 
 .run(
