@@ -432,7 +432,7 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.showConferenceLink = function() {
 	console.log("showConferenceLink");
-	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + $scope.preferences.room;
+	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + escape($scope.preferences.room);
 	var modalInstance = $modal.open({
 	    templateUrl: 'tpl/showLinkModal.html',
 	    size: "lg",
