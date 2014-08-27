@@ -64,6 +64,12 @@ angular.module('ahoyApp', [
           templateUrl: 'tpl/mediasharing.html',
           controller: 'MediaShareCtrl'
         })
+
+        .state("nousermedia", {
+          url: '/nousermedia',
+          templateUrl: 'tpl/nousermedia.html',
+          controller: 'MediaShareCtrl'
+        })
         
         .state("conference", {
           url: '/conference',

@@ -105,5 +105,12 @@ if (navigator.mozGetUserMedia) {
     };
   }
 } else {
+  getUserMedia = function(constraints, successCallback, errorCallback) {
+    errorCallback("NO_WEBRTC");
+  }
+  detachMediaStream = function(element) {
+  }
+  
+  webrtcDetectedBrowser = "none";
   console.log("Browser does not appear to be WebRTC-capable");
 }

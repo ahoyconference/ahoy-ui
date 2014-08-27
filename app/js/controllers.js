@@ -19,7 +19,11 @@ angular.module('ahoyApp.controllers', [])
 	  function(ws, speaker) {
 	    console.log("yes!");
 	    if (speaker) {
-		$state.transitionTo('mediasharing');
+		if (webrtcDetectedBrowser != "none") {
+		    $state.transitionTo('mediasharing');
+		} else {
+		    $state.transitionTo('nousermedia');
+		}
 	    } else {
 		$state.transitionTo('conference');
 	    }
@@ -64,7 +68,11 @@ angular.module('ahoyApp.controllers', [])
     $scope.joinConference = function() {
 	ahoyService.joinConference($scope.room, $scope.name, $scope.password, false, false,
 	    function(ws, speaker) {
-	        $state.transitionTo('mediasharing');
+		if (webrtcDetectedBrowser != "none") {
+		    $state.transitionTo('mediasharing');
+		} else {
+		    $state.transitionTo('nousermedia');
+		}
 	    },
 	    function(status, reconnect) {
 		if (status == 302) {
@@ -176,8 +184,6 @@ angular.module('ahoyApp.controllers', [])
     }
     
     $scope.next = function() {
-
-console.log("bw: "+$scope.bandwidth);
 	detachMediaStream(localVideo);
 	if (ahoyService.isTransmitOnly()) {
 	    $state.transitionTo("transmit");
@@ -186,7 +192,9 @@ console.log("bw: "+$scope.bandwidth);
 	}
     }
     
-    $scope.shareMedia(true, true);
+    if (webrtcDetectedBrowser != "none") {
+	$scope.shareMedia(true, true);
+    }
   }])
 
   .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', 'ahoyService', function($scope, $state, $stateParams, $timeout, $modal, ahoyService) {
