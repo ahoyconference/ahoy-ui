@@ -94,7 +94,7 @@ angular.module('ahoyApp.services', [])
 		    peer_connection = new RTCPeerConnection();
 		} else {
 		    var pc_config = null;
-		    var pc_constraints = {"optional": [{"DtlsSrtpKeyAgreement": true}, {"googCpuOveruseDetection": true}]};
+		    var pc_constraints = {optional: [{DtlsSrtpKeyAgreement: true}, {googCpuOveruseDetection: true}, {googImprovedWifiBwe: true}]};
 		    peer_connection = new RTCPeerConnection(pc_config, pc_constraints);
 		}
 		if (peer_connection == null) {
@@ -250,10 +250,21 @@ angular.module('ahoyApp.services', [])
     	    preferences.shareVideo = false;
     	    var mediaConstraints = {audio: audio}
 	    if (video) {
-		// mediaConstraints.video = {mandatory: { minWidth: 640, maxWidth: 640, minHeight: 360, maxHeight: 360}, optional: []};
-		mediaConstraints.video = true;
+		mediaConstraints.video = { optional: [] };
     		if (preferences.captureHdVideo) {
-		    mediaConstraints.video = {mandatory: { minWidth: 1280, maxWidth: 1280, minHeight: 720, maxHeight: 720}, optional: []};
+		    mediaConstraints.video.optional.push({minWidth: 1280});
+		    mediaConstraints.video.optional.push({maxWidth: 1280});
+		    mediaConstraints.video.optional.push({minHeight: 720});
+		    mediaConstraints.video.optional.push({maxHeight: 720});
+		} else {
+		    mediaConstraints.video.optional.push({minWidth: 640});
+		    mediaConstraints.video.optional.push({maxWidth: 640});
+		    mediaConstraints.video.optional.push({minHeight: 480});
+		    mediaConstraints.video.optional.push({maxHeight: 480});
+		}
+		if (webrtcDetectedBrowser == "chrome") {
+		    mediaConstraints.video.optional.push({googLeakyBucket: true});
+		    mediaConstraints.video.optional.push({googNoiseReduction: false});
 		}
 	    }
     	    getUserMedia(mediaConstraints, 
