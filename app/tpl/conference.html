@@ -13,10 +13,10 @@
 	</div>
     </div>
     <div class="row" style="display: flex;">
-	<div class="col-md-7" style="padding-left: 0px; padding-right: 0px; background: #00550;">
+	<div class="col-md-7 col-sm-12 col-xs-12" style="padding-left: 0px; padding-right: 0px; background: #00550;">
 	    <div class="wrapper-4-by-3">
 		<div class="element-with-aspect-ratio">
-		    <div class="video_overlay_big video_overlay_opacity" style="color: #fcfcfc; background: #005c97;">
+		    <div class="video_overlay" style="color: #fcfcfc; background: #005c97;">
 			<div style="width: 25%; vertical-align: middle; float: left;">&nbsp;</div>
 			<div class="text-center" style="width: 50%; vertical-align: middle; float: left;">
 		    	    <h4>{{bigScreenName | limitTo: 30}}</h4>
@@ -31,11 +31,11 @@
 			    </div>
 			</div>
 		    </div>
-		    <video id="bigScreen" style="width: 100%;" autoplay muted  ng-class="{true: 'mirror'}[bigScreenMirror]"/>
+		    <video id="bigScreen" style="width: 100%; max-height: 512px;" autoplay muted  ng-class="{true: 'mirror'}[bigScreenMirror]"/>
 		</div>
 	    </div>
 	</div>
-	<div class="col-md-5" style="background: #00555;" ng-controller="ChatCtrl">
+	<div class="col-md-5 col-sm-12 hidden-xs" style="background: #00555;" ng-controller="ChatCtrl">
 	    <div class="row-fluid" ng-hide="endsAt == 0">
 		<div class="col-md-12 well" style="margin-left: 5px; margin-bottom: 5px;">
 		    <timer ng-attr-end-time="endsAt" max-time-unit="hour" interval="1000">Conference ends in {{hours}} hours, {{minutes}} minutes, {{seconds}} seconds</timer>
@@ -61,34 +61,32 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12 text-left" id="membersDiv" style="padding-left: 0px; padding-right: 0px; margin-top: 5px;">
-	<div ng-repeat="(memberID, member) in members track by memberID | orderBy:'name':reverse" class='col-md-1 video_box_small' id='video_box-{{member.memberID}}'>
-	    <div class='video_overlay_small video_overlay_opacity text-center' ng-click="putOnBigScreen(member.memberID, member.mirror)" ng-mouseenter="mouseEnter(member)" ng-mouseleave="mouseLeave(member)">
-		<div class='row text-center' style="color: #fcfcfc; background: #005c97; padding: 0px; margin: 0px;">
-		    <div>
-		        <p>{{member.name | limitTo: 10}}</p>
+	<div ng-repeat="(memberID, member) in members track by memberID | orderBy:'name':reverse" class='col-xs-4 cols-sm-3 col-md-2' id='video_box-{{member.memberID}}' style="padding: 0px; padding-right: 5px; margin-top: 5px;">
+	    <div class="wrapper-4-by-3">
+		<div class="element-with-aspect-ratio" ng-mouseenter="mouseEnter(member)" ng-mouseleave="mouseLeave(member)">
+		    <div class='video_overlay text-center' ng-click="putOnBigScreen(member.memberID, member.mirror)">
+			<div class='row text-center' style="color: #fcfcfc; background: #005c97; padding: 0px; margin: 0px;">
+			    <div>
+		    		<p>{{member.name | limitTo: 15}}</p>
+			    </div>
+			    <div style="position: absolute; top: 5px; background: #aa0000;" ng-hide="!member.micMuted"">
+		    		<span class="glyphicon glyphicon-volume-off" style="padding-left: 10px;"/>
+			    </div>
+			</div>
+			<div style="position: absolute; top: 5px; right: 5px; background: #aa0000;" ng-show="localMember.moderator && (member.memberID != localMember.memberID) && member.showOverlay">
+			    <div class="btn-group pull-right">
+		    		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
+		    		<ul class="dropdown-menu" role="menu">
+				    <li><a ng-click="kick(member)">Kick</a></li>
+		    		</ul>
+		    		<button type="button" class="btn btn-default btn-sm" ng-keyup="cameraControl(memberID, $event.keyCode)" ng-show="member.allowCameraControl && member.haveCameraControl"><span class="glyphicon glyphicon-facetime-video"></span></button>
+			    </div>
+			</div>
 		    </div>
-		    <div style="position: absolute; top: 5px; background: #aa0000;" ng-hide="!member.micMuted"">
-		        <span class="glyphicon glyphicon-volume-off" style="padding-left: 10px;"/>
-		    </div>
-		</div>
-		<div style="position: absolute; top: 5px; left: 120px; background: #aa0000;" ng-show="localMember.moderator && (member.memberID != localMember.memberID) && member.showOverlay">
-		    <div class="btn-group pull-right">
-		        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
-		        <ul class="dropdown-menu" role="menu">
-				<li><a ng-click="kick(member)">Kick</a></li>
-		    	</ul>
-		    </div>
-		</div>
-		<div style="position: absolute; bottom: 5px; left: 120px; background: #aa0000;" ng-show="member.allowCameraControl && member.haveCameraControl">
-		    <div class="btn-group pull-right">
-		        <button type="button" class="btn btn-default btn-sm" ng-keyup="cameraControl(memberID, $event.keyCode)"><span class="glyphicon glyphicon-facetime-video"></span></button>
-		    </div>
+		    <video id="video-{{member.memberID}}" style="width: 100%;" ng-class="{true:'mirror'}[member.mirror]" autoplay/>
 		</div>
 	    </div>
-	    <video id="video-{{member.memberID}}" width=160 height=120 ng-class="{true:'mirror'}[member.mirror]" autoplay/>
 	</div>
-      </div>
     </div>
     <p ng-repeat="camera in cameras track by camera.id">
 	{{camera.name}} 

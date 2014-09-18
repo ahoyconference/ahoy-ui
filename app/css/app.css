@@ -72,29 +72,10 @@
   filter: FlipH;                 /* IE 6/7/8 */
 }
 
-.video_overlay_big {
+.video_overlay {
     position: absolute;
     width: 100%;
     z-index:300000;
-}
-
-.video_box_small {
-//    border: 1px solid;
-    margin: 0px;
-    padding: 0px;
-    margin-right: 10px;
-    width: 160px;
-    z-index:300000;
-}
-
-.video_overlay_small {
-    position:absolute;
-    width: 160px;
-    height: 120px;
-    z-index:300000;
-}
-
-.video_overlay_opacity {
     opacity: 0.8;       /* modern browser */  
     -moz-opacity: 0.2;  /* older Mozilla browser */  
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)"; /* IE8 in Standard Compliant Mode */  
