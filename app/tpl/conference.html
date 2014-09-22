@@ -73,10 +73,10 @@
 		    		<span class="glyphicon glyphicon-volume-off" style="padding-left: 10px;"/>
 			    </div>
 			</div>
-			<div style="position: absolute; top: 5px; right: 5px; background: #aa0000;" ng-show="localMember.moderator && (member.memberID != localMember.memberID) && member.showOverlay">
+			<div style="position: absolute; top: 5px; right: 5px; background: #aa0000;" ng-show="member.showOverlay">
 			    <div class="btn-group pull-right">
-		    		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
-		    		<ul class="dropdown-menu" role="menu">
+		    		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"  ng-show="localMember.moderator && (member.memberID != localMember.memberID)"><span class="glyphicon glyphicon-cog"></span></button>
+		    		<ul class="dropdown-menu" role="menu" ng-show="localMember.moderator && (member.memberID != localMember.memberID)">
 				    <li><a ng-click="kick(member)">Kick</a></li>
 		    		</ul>
 		    		<button type="button" class="btn btn-default btn-sm" ng-keyup="cameraControl(memberID, $event.keyCode)" ng-show="member.allowCameraControl && member.haveCameraControl"><span class="glyphicon glyphicon-facetime-video"></span></button>
