@@ -81,7 +81,7 @@ if (navigator.mozGetUserMedia) {
 
   detachMediaStream = function(element) {
     element.pause();
-    element.src = null;
+    element.src = "";
   };
 
   // The representation of tracks in a stream is changed in M26.

@@ -152,7 +152,7 @@ angular.module('ahoyApp.controllers', [])
 	          $scope.requestingMedia = false;
 	        });
 	      }, 1);
-	      localVideo.src = null;
+	      localVideo.src = "";
 	    }
 	  },
 	  function(error) {
