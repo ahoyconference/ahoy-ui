@@ -8,7 +8,8 @@ angular.module('ahoyApp', [
   'ui.bootstrap',
   'timer',
   'ngAnimate',
-  'localytics.directives'
+  'localytics.directives',
+  'pascalprecht.translate'
 ])
 
 .run(
@@ -30,31 +31,30 @@ angular.module('ahoyApp', [
   ]
 )
 .config(
-  [ '$stateProvider', '$urlRouterProvider',
-    function ($stateProvider,   $urlRouterProvider) {
-
+  [ '$stateProvider', '$urlRouterProvider', '$translateProvider',
+    function ($stateProvider, $urlRouterProvider, $translateProvider) {
 
       $stateProvider
         .state("joinRoom", {
-          url: '/join/:room',
+          url: '/join/:room?lang',
           templateUrl: 'tpl/join.html',
           controller: 'JoinCtrl'
         })
 
         .state("joinRoomWithName", {
-          url: '/join/:room/:name',
+          url: '/join/:room/:name?lang',
           templateUrl: 'tpl/join.html',
           controller: 'JoinCtrl'
         })
 
         .state("join", {
-          url: '/join',
+          url: '/join?lang',
           templateUrl: 'tpl/join.html',
           controller: 'JoinCtrl'
         })
 
         .state("start", {
-          url: '/start',
+          url: '/start?lang',
           templateUrl: 'tpl/start.html',
           controller: 'StartCtrl'
         })
@@ -87,6 +87,11 @@ angular.module('ahoyApp', [
       $urlRouterProvider
         .otherwise('/start');
 
+      $translateProvider.useStaticFilesLoader({
+          prefix: 'i18n/',
+          suffix: '.json'
+        });
+      $translateProvider.preferredLanguage('en');
     }
   ]
 );

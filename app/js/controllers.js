@@ -1,8 +1,11 @@
 'use strict';
 
 angular.module('ahoyApp.controllers', [])
-  .controller('JoinCtrl', ['$scope', '$state', '$stateParams', '$timeout', 'ahoyService', function($scope, $state, $stateParams, $timeout, ahoyService) {
-    console.log('JoinCtrl');
+  .controller('JoinCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', function($scope, $state, $stateParams, $timeout, $translate, ahoyService) {
+    console.log('JoinCtrl language: ' + $stateParams.lang);
+    if ($stateParams.lang) {
+	$translate.use($stateParams.lang);
+    }
     if (ahoyService.inConference() == true) {
       $state.transitionTo('conference');
       return;
@@ -30,16 +33,16 @@ angular.module('ahoyApp.controllers', [])
 	  },
 	  function(status, reconnect) {
 	    if (status == 404) {
-		ahoyService.showErrorDialog($scope, "Unknown conference", "Sorry, that conference room does not exist.");
+		ahoyService.showErrorDialog($scope, "join.unknown_conference_title", "join.unknown_conference.text");
 	    } else if (status == 403) {
-		ahoyService.showErrorDialog($scope, "Wrong password", "Sorry, the password for the conference is wrong.");
+		ahoyService.showErrorDialog($scope, "join.wrong_password_title", "join.wrong_password_text");
 	        $scope.$apply(function() {
 	          $scope.password = "";
 	        });
 	    } else if (status == 470) {
-		ahoyService.showErrorDialog($scope, "Conference locked", "Sorry, the conference room has been locked by a moderator.");
+		ahoyService.showErrorDialog($scope, "join.conference_locked_title", "join.conference_locked_text");
 	    } else if (status == 486) {
-		ahoyService.showErrorDialog($scope, "Conference full", "Sorry, the conference room is full.");
+		ahoyService.showErrorDialog($scope, "join.conference_full_title", "join.conference_full_text");
 	    } else if (status == 302) {
 	      console.log("redirecting...");
 	      $timeout(function() {
@@ -58,8 +61,11 @@ angular.module('ahoyApp.controllers', [])
     
   }])
 
-  .controller('StartCtrl', ['$scope', '$timeout', '$state', '$stateParams', 'ahoyService', function($scope, $timeout, $state, $stateParams, ahoyService) {
-    console.log('StartCtrl');
+  .controller('StartCtrl', ['$scope', '$timeout', '$state', '$stateParams', '$translate', 'ahoyService', function($scope, $timeout, $state, $stateParams, $translate, ahoyService) {
+    console.log('StartCtrl language: ' + $stateParams.lang);
+    if ($stateParams.lang) {
+	$translate.use($stateParams.lang);
+    }
     if (ahoyService.inConference() == true) {
       $state.transitionTo('conference');
       return;
@@ -114,12 +120,19 @@ angular.module('ahoyApp.controllers', [])
     
   }])
 
-  .controller('MediaShareCtrl', ['$scope', '$state', '$stateParams', '$timeout', 'ahoyService', function($scope, $state, $stateParams, $timeout, ahoyService) {
+  .controller('MediaShareCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', function($scope, $state, $stateParams, $timeout, $translate, ahoyService) {
     console.log('MediaShareCtrl');
+
     if (ahoyService.inConference() && (ahoyService.sharingAudio() || ahoyService.sharingVideo())) {
       $state.transitionTo('conference');
       return;
     }
+    
+    $scope.optionsList = [
+	{val: '1000', translationKey: 'mediashare.bandwidth_fast'},
+	{val: '500', translationKey: 'mediashare.bandwidth_standard'},
+	{val: '250', translationKey: 'mediashare.bandwidth_slow'}
+    ];
 
     $scope.bandwidth = 500;
 
@@ -197,7 +210,7 @@ angular.module('ahoyApp.controllers', [])
     }
   }])
 
-  .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', 'ahoyService', function($scope, $state, $stateParams, $timeout, $modal, ahoyService) {
+  .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', '$translate', 'ahoyService', function($scope, $state, $stateParams, $timeout, $modal, $translate, ahoyService) {
     console.log('ConferenceCtrl');
 
     if (ahoyService.inConference() != true) {
@@ -432,7 +445,7 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.showConferenceLink = function() {
 	console.log("showConferenceLink");
-	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + escape($scope.preferences.room);
+	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + escape($scope.preferences.room) + "?lang="+$translate.use();
 	var modalInstance = $modal.open({
 	    templateUrl: 'tpl/showLinkModal.html',
 	    size: "lg",
@@ -486,7 +499,7 @@ angular.module('ahoyApp.controllers', [])
     ahoyService.subscribeMedia();
   }])
 
-  .controller('ChatCtrl', ['$scope', '$state', '$stateParams', '$timeout', 'ahoyService', function($scope, $state, $stateParams, $timeout, ahoyService) {
+  .controller('ChatCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', function($scope, $state, $stateParams, $timeout, $translate, ahoyService) {
     var self = this;
     console.log('ChatCtrl:');
     $scope.messages = new Array();
@@ -496,8 +509,10 @@ angular.module('ahoyApp.controllers', [])
       if ($scope.chatMessage != "") {
 	console.log("sendChatMessage: "+$scope.chatMessage);
 	ahoyService.sendChatMessage($scope.chatMessage);
-	self.addChatMessage("me", $scope.chatMessage, false);
-	$scope.chatMessage = "";
+	$translate("chat.me").then(function (translation) {
+	  self.addChatMessage(translation, $scope.chatMessage, false);
+	  $scope.chatMessage = "";
+	});
       }
       return false;
     };
@@ -542,7 +557,7 @@ angular.module('ahoyApp.controllers', [])
 
     ahoyService.registerStatusMessageListener(function(msg) {
       console.log("status handler: "+JSON.stringify(msg));
-      self.addStatusMessage(msg.text, true);
+      self.addStatusMessage(msg.text, false);
     });
 
   }])

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ahoyApp.services', [])
-    .service('ahoyService', ["$modal", function($modal) {
+    .service('ahoyService', ["$modal", "$translate", function($modal, $translate) {
       var self = this;
       var activeConference = false;
       var activeMedia = false;
@@ -460,10 +460,12 @@ angular.module('ahoyApp.services', [])
 	          if (scopeListener != null) {
 	    	    scopeListener();
 	          }
-	            if (statusMessageListener != null) {
-	              var event = {text: "The conference has been "+(msg.locked?"locked":"unlocked")+"."};
+	          if (statusMessageListener != null) {
+	            $translate("conference.room_" + (msg.locked?"locked":"unlocked")).then(function (translation) {
+	              var event = { text: translation };
 	    	      statusMessageListener(event);
-	            }
+	            });
+	          }
 	    	  break;
 		case "MEDIA_RECEIVE_request":
 		  var call_peer_sdp = unescape(msg.sdp);
@@ -491,8 +493,10 @@ angular.module('ahoyApp.services', [])
 	    	    conferenceEventListener(msg);
 	          }
 	          if (statusMessageListener != null) {
-	            var event = {text: msg.member.name+" has joined the conference."};
-	    	    statusMessageListener(event);
+	            $translate("conference.member_join").then(function (translation) {
+	              var event = { text: msg.member.name + " " + translation };
+	    	      statusMessageListener(event);
+	            });
 	          }
 		  break;
 		case "CONFERENCE_LEAVE_indication":
@@ -512,8 +516,10 @@ angular.module('ahoyApp.services', [])
 	    	      scopeListener();
 	            }
 	            if (statusMessageListener != null) {
-	              var event = {text: msg.member.name+" has left the conference."};
-	    	      statusMessageListener(event);
+	              $translate("conference.member_leave").then(function (translation) {
+	                var event = { text: msg.member.name + " " + translation };
+	    	        statusMessageListener(event);
+		      });
 	            }
 	            electSpeaker();
 		  }
@@ -598,8 +604,10 @@ angular.module('ahoyApp.services', [])
 		        sendMediaRequest(new Array({"memberID": msg.member.memberID, "audio": msg.audio, "video": msg.video}));
 		      }
 	              if (statusMessageListener != null) {
-	                var event = {text: msg.member.name+" started sharing media."};
-	    	        statusMessageListener(event);
+	                $translate("conference.member_started_media").then(function (translation) {
+	                  var event = { text: msg.member.name + " " + translation };
+	    	          statusMessageListener(event);
+		        });
 	              }
 		    }
 	          break;

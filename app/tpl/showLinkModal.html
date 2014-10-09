@@ -1,11 +1,11 @@
         <div class="modal-header">
-            <h3 class="modal-title">Invite guests</h3>
+            <h3 class="modal-title" translate="link.invite_guests">Invite guests</h3>
         </div>
         <div class="modal-body">
-    	    Share this link to invite guests to this conference:<br><br>
+    	    {{ 'link.share_link_to_invite_guests' | translate }}:<br><br>
     	    {{conferenceLink}}
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="hideConferenceLink()">Close</button>
+            <button class="btn btn-primary" ng-click="hideConferenceLink()" translate="button.close">Close</button>
         </div>
 

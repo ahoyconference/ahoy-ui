@@ -1,14 +1,15 @@
     <div class="row" style="display: flex;">
 	<div class="col-md-6 menubar">
-          <h3>Room {{preferences.room}} <a href=""><span class="glyphicon glyphicon-link" ng-click="showConferenceLink()"></span></a><h3>
+          <h3>{{ 'conference.room' | translate }} {{preferences.room}}<h3>
 	</div>
 	<div class="col-md-6 menubar">
     	  <div class="navbar-right navbar-btn">
-    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingCameraControl]" ng-click="toggleCameraControl()" ng-hide="!localMember.haveCameraControl">{{!sharingCameraControl && 'Allow' || 'Disallow'}} camera control</button>
-    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingMic]" ng-click="toggleMuteMic()" ng-hide="!sharingMic || (webrtcDetectedBrowser != 'chrome')">{{!mutingMic && 'Mute' || 'Unmute'}} microphone</button>
-    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingCam]" ng-click="toggleMuteCam()" ng-hide="!sharingCam || (webrtcDetectedBrowser != 'chrome')">{{!mutingCam && 'Mute' || 'Unmute'}} camera</button>
-    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[preferences.conferenceLocked]" ng-click="toggleConferenceLock()" ng-hide="!localMember.moderator">{{preferences.conferenceLocked && 'Unlock' || 'Lock'}}</button>
-    	    <button class="btn btn-default btn-primary navbar-btn" ng-click="leaveConference()">Exit</button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[preferences.conferenceLocked]" ng-click="toggleConferenceLock()" ng-hide="!localMember.moderator" tooltip="{{ preferences.conferenceLocked && ('conference.unlock_tooltip' | translate) || ('conference.lock_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="preferences.conferenceLocked && 'glyphicon-globe' || 'glyphicon-lock'"></span></button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingCameraControl]" ng-click="toggleCameraControl()" ng-hide="!localMember.haveCameraControl" tooltip="{{ sharingCameraControl && ('conference.disallow_camera_control_tooltip' | translate) || ('conference.allow_camera_control_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!sharingCameraControl && 'glyphicon-record' || 'glyphicon-ban-circle'"></span></button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingMic]" ng-click="toggleMuteMic()" ng-hide="!sharingMic || (webrtcDetectedBrowser != 'chrome')" tooltip="{{ mutingMic && ('conference.unmute_mic_tooltip' | translate) || ('conference.mute_mic_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingMic && 'glyphicon-volume-off' || 'glyphicon-volume-up'"></span></button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingCam]" ng-click="toggleMuteCam()" ng-hide="!sharingCam || (webrtcDetectedBrowser != 'chrome')" tooltip="{{ mutingCam && ('conference.unmute_cam_tooltip' | translate) || ('conference.mute_cam_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingCam && 'glyphicon-eye-close' || 'glyphicon-eye-open'"></span></button>
+    	    <button class="btn btn-default btn-primary navbar-btn" ng-click="showConferenceLink()" tooltip="{{ 'conference.show_link' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-link"></span></button>
+    	    <button class="btn btn-default btn-primary navbar-btn" ng-click="leaveConference()" tooltip="{{ 'conference.leave' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-log-out"></span></button>
     	  </div>
 	</div>
     </div>
@@ -26,7 +27,7 @@
 			    <div class="btn-group pull-right">
 				<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
 				<ul class="dropdown-menu" role="menu">
-		    		    <li><div class="input-group"><span class="input-group-addon"><input type="checkbox" ng-model="bigScreenAuto"> Automatic video switching</span></div>
+		    		    <li><div class="input-group"><span class="input-group-addon"><input type="checkbox" ng-model="bigScreenAuto"> {{ 'conference.automatic_video_switching' | translate }}</span></div>
 		    		</ul>
 			    </div>
 			</div>
@@ -52,7 +53,7 @@
 	    <div class="row-fluid">
 		<div class="col-md-12 text-center" style="margin-top: 0px;">
 		    <form  ng-submit="sendChatMessage()">
-			<input type="text" class="form-control" id="messageText" value="{{chatMessage}}" placeholder="enter a chat message and press enter" ng-model="chatMessage"/>
+			<input type="text" class="form-control" id="messageText" value="{{chatMessage}}" placeholder="{{ 'chat.enter_message' | translate }}" ng-model="chatMessage"/>
 		    </form>
 		</div>
 	    </div>
@@ -77,7 +78,7 @@
 			    <div class="btn-group pull-right">
 		    		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"  ng-show="localMember.moderator && (member.memberID != localMember.memberID)"><span class="glyphicon glyphicon-cog"></span></button>
 		    		<ul class="dropdown-menu" role="menu" ng-show="localMember.moderator && (member.memberID != localMember.memberID)">
-				    <li><a ng-click="kick(member)">Kick</a></li>
+				    <li><a ng-click="kick(member)" translate="conference.kick">Kick</a></li>
 		    		</ul>
 		    		<button type="button" class="btn btn-default btn-sm" ng-keyup="cameraControl(memberID, $event.keyCode)" ng-show="member.allowCameraControl && member.haveCameraControl"><span class="glyphicon glyphicon-facetime-video"></span></button>
 			    </div>

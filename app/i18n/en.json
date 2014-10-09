@@ -1,0 +1,89 @@
+{
+    "start": {
+	"start_new_conference": "Start a new conference",
+	"your_name": "Your name",
+	"your_name_placeholder": "What's your name?",
+	"conference_room": "Conference room",
+	"conference_room_placeholder": "Optional room name",
+	"conference_room_exists": "Conference room exists",
+	"password": "Password",
+	"password_placeholder": "Optional password",
+	"moderator_password": "Moderator Password",
+	"moderator_password_placeholder": "Optional moderator password",
+	"start": "Start",
+	"join_existing_conference": "or join an existing conference"
+    },
+    "join": {
+	"join_conference": "Join a conference",
+	"your_name": "Your name",
+	"your_name_placeholder": "What's your name?",
+	"conference_room": "Conference room",
+	"conference_room_placeholder": "Room name",
+	"password": "Password",
+	"password_placeholder": "Optional password",
+	"next": "Next",
+	"start_conference": "or start a new conference",
+	"wrong_password_title": "Wrong password",
+	"wrong_password_text": "Sorry, the password for the conference is wrong.",
+	"unknown_conference_title": "Unknown conference",
+	"unknown_conference_text": "Sorry, that conference room does not exist.",
+	"conference_full_title": "Conference full",
+	"conference_full_text": "Sorry, the conference room is full.",
+	"conference_locked_title": "Conference locked",
+	"conference_locked_text": "Sorry, the conference room has been locked by a moderator."
+    },
+    "mediashare": {
+	"mic_cam_sharing": "Microphone/Camera sharing",
+	"bandwidth_placeholder": "Internet connection uplink speed",
+	"bandwidth_fast": "fast (cable, vdsl, fibre more than 1.0 Mbit/s)",
+	"bandwidth_standard": "standard (cable, adsl less than 1.0 Mbit/s",
+	"bandwidth_slow": "slow (adsl, mobile less than 0.5 Mbit/s)",
+	"awww_snap": "Awww snap! :-(",
+	"no_webrtc": "Your browser does not support WebRTC.",
+	"supported_browsers": "We recommend the stable versions of Google Chrome, Opera or Mozilla Firefox (in that order).",
+	"chat_only": "If you join the conference anyway you will be limited to text chat."
+    },
+    "link": {
+	"invite_guests": "Invite guests",
+	"share_link_to_invite_guests": "Share this link to invite guests to the conference"
+    },
+    "button": {
+	"enable_cam": "Enable camera",
+	"disable_cam": "Disable camera",
+	"enable_mic": "Enable microphone",
+	"disable_mic": "Disable microphone",
+	"mute_cam": "Mute camera",
+	"unmute_cam": "Unmute camera",
+	"mute_mic": "Mute microphone",
+	"unmute_mic": "Unmute microphone",
+	"start": "Start",
+	"next": "Next",
+	"close": "Close",
+	"exit": "Exit"
+    },
+    "chat": {
+	"me": "me",
+	"enter_message": "enter a chat message and press enter"
+    },
+    "conference": {
+	"room": "Room",
+	"room_locked": "The conference has been locked by a moderator.",
+	"room_unlocked": "The conference has been unlocked by a moderator.",
+	"member_join": "has joined the conference.",
+	"member_leave": "has left the conference.",
+	"member_started_media": "started sharing media.",
+	"automatic_video_switching": "Automatic video switching",
+	"kick": "kick",
+	"lock_tooltip": "Lock conference, disallow new participants",
+	"unlock_tooltip": "Unlock conference, allow new participants",
+	"mute_cam_tooltip": "Stop sending my video.",
+	"unmute_cam_tooltip": "Start sending my video.",
+	"mute_mic_tooltip": "Stop sending my audio.",
+	"unmute_mic_tooltip": "Start sending my audio.",
+	"leave": "Leave the conference.",
+	"show_link": "Invite guests.",
+	"allow_camera_control_tooltip": "Allow remote camera control",
+	"disallow_camera_control_tooltip": "Disallow remote camera control."
+    }
+}
+

@@ -1,0 +1,88 @@
+{
+    "start": {
+	"start_new_conference": "Neue Konferenz starten",
+	"your_name": "Ihr Name",
+	"your_name_placeholder": "Wie heißen Sie?",
+	"conference_room": "Raumname",
+	"conference_room_placeholder": "Optionaler Raumame",
+	"conference_room_exists": "Conference room exists",
+	"password": "Passwort",
+	"password_placeholder": "Optionales Passwort",
+	"moderator_password": "Moderatoren Passwort",
+	"moderator_password_placeholder": "Optionales Moderatoren Passwort",
+	"join_existing_conference": "oder einen bestehenden Raum betreten"
+    },
+    "join": {
+	"join_conference": "Konferenz beitreten",
+	"your_name": "Ihr Name",
+	"your_name_placeholder": "Wie heißen Sie?",
+	"conference_room": "Raumname",
+	"conference_room_placeholder": "Raumame",
+	"conference_room_exists": "Conference room exists",
+	"password": "Passwort",
+	"password_placeholder": "Optionales Passwort",
+	"start_conference": "oder eine neue Konferenz starten",
+	"wrong_password_title": "Falsches Passwort",
+	"wrong_password_text": "Leider ist das eingegebene Passwort für diese Konferenz nicht gültig.",
+	"unknown_conference_title": "Unbekannter Raum",
+	"unknown_conference_text": "Leider existiert diese Konferenz nicht.",
+	"conference_full_title": "Raum belegt",
+	"conference_full_text": "Leider ist dieser Konferenzraum voll.",
+	"conference_locked_title": "Raum verschloßen",
+	"conference_locked_text": "Dieser Raum wurde von einem Moderator verschloßen."
+    },
+    "mediashare": {
+	"mic_cam_sharing": "Mikrofon/Kamera Freigabe",
+	"bandwidth_placeholder": "Internet Uplink Geschwindigkeit",
+	"bandwidth_fast": "schnell (Kabel, VDSL mehr als 1,0 Mbit/s)",
+	"bandwidth_standard": "standard (Kabel, ADSL bis zu 1,0 Mbit/s",
+	"bandwidth_slow": "langsam (ADSL, Handy weniger als 0,5 Mbit/s)",
+	"awww_snap": "Oh wie schade! :-(",
+	"no_webrtc": "Ihr Browser beherrscht kein WebRTC.",
+	"supported_browsers": "Wir empfehlen die stabilen Versionen von Google Chrome, Opera oder Mozilla Firefox (in dieser Reihenfolge)",
+	"chat_only": "Sie können jetzt nur per Textchat an dieser Konferenz teilnehmen."
+    },
+    "link": {
+	"invite_guests": "Gäste einladen",
+	"share_link_to_invite_guests": "Teilen Sie folgenden Link, um Gäste zu dieser Konferenz einzuladen"
+    },
+    "button": {
+	"enable_cam": "Kamera einschalten",
+	"disable_cam": "Kamera ausschalten",
+	"enable_mic": "Mikrofon einschalten",
+	"disable_mic": "Mikrofon ausschalten",
+	"mute_cam": "Kamera einschalten",
+	"unmute_cam": "Kamera ausschalten",
+	"mute_mic": "Mikrofon einschalten",
+	"unmute_mic": "Mikrofon ausschalten",
+	"start": "Starten",
+	"next": "Weiter",
+	"close": "Schließen",
+	"exit": "Verlassen"
+    },
+    "chat": {
+	"me": "Ich",
+	"enter_message": "Nachricht eingeben und Enter drücken"
+    },
+    "conference": {
+	"room": "Raum",
+	"room_locked": "Die Konferenz wurde von einem Moderator verschloßen.",
+	"room_unlocked": "Die Konferenz wurde von einem Moderator geöffnet.",
+	"member_join": "hat die Konferenz betreten.",
+	"member_leave": "hat die Konferenz verlassen.",
+	"member_started_media": "hat mit der Mikrofon/Kamera Freigabe begonnen.",
+	"automatic_video_switching": "Automatische Video Umschaltung",
+	"kick": "entfernen",
+	"lock_tooltip": "Konferenz verschließen, keine weiteren Teilnehmer erlauben.",
+	"unlock_tooltip": "Konferenz für weitere Teilnehmer öffnen.",
+	"mute_cam_tooltip": "Mein Video nicht mehr senden.",
+	"unmute_cam_tooltip": "Mein Video senden.",
+	"mute_mic_tooltip": "Mein Audio nicht mehr senden.",
+	"unmute_mic_tooltip": "Mein Audio senden.",
+	"leave": "Konferenz verlassen.",
+	"show_link": "Gäste einladen",
+	"allow_camera_control_tooltip": "Anderen erlauben meine Kamera zu steuern.",
+	"disallow_camera_control_tooltip": "Anderen nicht erlauben meine Kamera zu steuern."
+    }
+}
+
