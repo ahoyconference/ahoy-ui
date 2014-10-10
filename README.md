@@ -3,4 +3,5 @@ ahoy-ui
 
 Ahoy! Conference AngularJS UI
 
-To build the app run "npm install".
+The app is build with grunt. Make sure you have grunt-cli installed ("npm install -g grunt-cli").
+To install the neccessary dependencies run "npm install" once. Then you can build the app with "grunt".
