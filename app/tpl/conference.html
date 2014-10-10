@@ -1,8 +1,8 @@
     <div class="row" style="display: flex;">
-	<div class="col-md-6 menubar">
+	<div class="col-sm-6 hidden-xs menubar">
           <h3>{{ 'conference.room' | translate }} {{preferences.room}}<h3>
 	</div>
-	<div class="col-md-6 menubar">
+	<div class="col-sm-6 col-xs-12 menubar">
     	  <div class="navbar-right navbar-btn">
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[preferences.conferenceLocked]" ng-click="toggleConferenceLock()" ng-hide="!localMember.moderator" tooltip="{{ preferences.conferenceLocked && ('conference.unlock_tooltip' | translate) || ('conference.lock_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="preferences.conferenceLocked && 'glyphicon-globe' || 'glyphicon-lock'"></span></button>
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingCameraControl]" ng-click="toggleCameraControl()" ng-hide="!localMember.haveCameraControl" tooltip="{{ sharingCameraControl && ('conference.disallow_camera_control_tooltip' | translate) || ('conference.allow_camera_control_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!sharingCameraControl && 'glyphicon-record' || 'glyphicon-ban-circle'"></span></button>
