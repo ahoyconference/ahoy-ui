@@ -59,7 +59,9 @@
 	"start": "Start",
 	"next": "Next",
 	"close": "Close",
-	"exit": "Exit"
+	"exit": "Exit",
+	"ok": "Ok",
+	"cancel": "Cancel"
     },
     "chat": {
 	"me": "me",
@@ -83,7 +85,13 @@
 	"leave": "Leave the conference.",
 	"show_link": "Invite guests.",
 	"allow_camera_control_tooltip": "Allow remote camera control",
-	"disallow_camera_control_tooltip": "Disallow remote camera control."
+	"disallow_camera_control_tooltip": "Disallow remote camera control.",
+	"fullscreen_tooltip": "Fullscreen",
+	"settings_tooltip": "Settings",
+	"onbeforeunload": "Do you really want to leave this conference?",
+	"confirm_leave_title": "Leave conference?",
+	"confirm_leave_text": "Do you really want to leave this conference?",
+	"countdown": "This conference ends in {{hours}} hours and {{minutes}} minutes."
     }
 }
 

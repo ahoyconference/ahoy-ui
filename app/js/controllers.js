@@ -21,6 +21,11 @@ angular.module('ahoyApp.controllers', [])
 	ahoyService.joinConference($scope.room, $scope.name, $scope.password, $scope.transmitOnly, $scope.captureHdVideo,
 	  function(ws, speaker) {
 	    console.log("yes!");
+	    $translate("conference.onbeforeunload").then(function (translation) {
+	      window.onbeforeunload = function() {
+	        return translation; 
+	      }
+	    });
 	    if (speaker) {
 		if (webrtcDetectedBrowser != "none") {
 		    $state.transitionTo('mediasharing');
@@ -74,6 +79,11 @@ angular.module('ahoyApp.controllers', [])
     $scope.joinConference = function() {
 	ahoyService.joinConference($scope.room, $scope.name, $scope.password, false, false,
 	    function(ws, speaker) {
+		$translate("conference.onbeforeunload").then(function (translation) {
+		    window.onbeforeunload = function() {
+			return translation; 
+		    }
+		});
 		if (webrtcDetectedBrowser != "none") {
 		    $state.transitionTo('mediasharing');
 		} else {
@@ -242,7 +252,18 @@ angular.module('ahoyApp.controllers', [])
     $scope.$on('timer-stopped', function (event, data){
 	$scope.leaveConference();
     });
-    
+
+    $scope.countdown = {};
+    $scope.$on('timer-tick', function (event, args) {
+	if (event && event.targetScope) {
+	  $scope.$apply(function() {
+	    $scope.countdown.hours = event.targetScope.hours;
+	    $scope.countdown.minutes = event.targetScope.minutes;
+	    $scope.countdown.seconds = event.targetScope.seconds;
+	  });
+	}
+    });
+
     $scope.chatMessagesStyle = {"overflow-y": "scroll", "padding": "0px", "padding-left": "5px", "margin-left": "5px"};
     if ($scope.endsAt > 0) {
 	$scope.chatMessagesStyle.height = "390px";
@@ -335,6 +356,8 @@ angular.module('ahoyApp.controllers', [])
     }
     
     $scope.leaveConference = function() {
+      window.onbeforeunload = null;
+      document.removeEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
       ahoyService.leaveConference();
       $state.transitionTo('start');
     }
@@ -436,7 +459,15 @@ angular.module('ahoyApp.controllers', [])
       bigScreenMemberID = memberID;
     }
 
+    $scope.isFullscreen = false;
+    $scope.fullscreenListener = function() {
+	console.log("fullscreenListener: " +screenfull.isFullscreen);
+	$scope.$apply(function() {
+	    $scope.isFullscreen = screenfull.isFullscreen;
+	});
+    }
 
+    document.addEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
     $scope.fullscreen = function() {
 	if (screenfull.enabled) {
     	    screenfull.request(bigScreen);
@@ -456,6 +487,10 @@ angular.module('ahoyApp.controllers', [])
 		}
 	    }
 	});
+    }
+    
+    $scope.confirmLeaveConference = function() {
+	ahoyService.showConfirmDialog($scope, "conference.confirm_leave_title", "conference.confirm_leave_text", $scope.leaveConference);
     }
 
     ahoyService.registerMediaEventListener(function(msg) {
@@ -489,9 +524,11 @@ angular.module('ahoyApp.controllers', [])
     
     });
 
-    window.onbeforeunload = function() {
-	ahoyService.leaveConference();
-    }
+    $translate("conference.onbeforeunload").then(function (translation) {
+	window.onbeforeunload = function() {
+	    return translation; 
+	}
+    });
 
     if (!ahoyService.publishingMedia() && (ahoyService.sharingAudio() || ahoyService.sharingVideo())) {
 	ahoyService.publishMedia();
@@ -518,8 +555,23 @@ angular.module('ahoyApp.controllers', [])
     };
     var chatMessage = document.getElementById('chatMessages');
 
+    // inspired by http://stackoverflow.com/a/3890175/3702894
+    function linkify(inputText) {
+	var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+	//URLs starting with http://, https://, or ftp://
+	replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+	replacedText = inputText.replace(replacePattern1, '$1');
+
+	//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+	replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+	replacedText = replacedText.replace(replacePattern2, '$1http://$2');
+
+	return replacedText;
+    }
+
     this.addChatMessage = function(from, text, apply) {
-      var message = { from: from+":", text: text };
+      var message = { from: from+":", text: linkify(text) };
       if (apply) {
         $scope.$apply(function() {
           $scope.messages.push(message);

@@ -82,6 +82,10 @@
     filter:alpha(opacity=20); /* IE5.x -7.0 */  
 }
 
+.video-max-height {
+  max-height: 512px;
+}
+
 .wrapper-16-by-9 {
 	position: relative;
 	padding-bottom: 56.25%;

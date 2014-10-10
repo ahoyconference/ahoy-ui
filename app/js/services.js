@@ -895,6 +895,24 @@ angular.module('ahoyApp.services', [])
 	    }
 	});
     }
+
+    this.showConfirmDialog = function(scope, title, message, confirmCallback) {
+	window.modal = $modal;
+	scope.confirmDialog = { title: title, message: message };
+	var modalInstance = $modal.open({
+	    templateUrl: 'tpl/confirmModal.html',
+	    scope: scope,
+	    controller: function($scope, $modalInstance) {
+		$scope.confirm = function() {
+		    if (confirmCallback) confirmCallback();
+		    $modalInstance.close();
+		}
+		$scope.cancel = function() {
+		    $modalInstance.close();
+		}
+	    }
+	});
+    }
       
     }]);
     

@@ -9,7 +9,7 @@
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingMic]" ng-click="toggleMuteMic()" ng-hide="!sharingMic || (webrtcDetectedBrowser != 'chrome')" tooltip="{{ mutingMic && ('conference.unmute_mic_tooltip' | translate) || ('conference.mute_mic_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingMic && 'glyphicon-volume-off' || 'glyphicon-volume-up'"></span></button>
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingCam]" ng-click="toggleMuteCam()" ng-hide="!sharingCam || (webrtcDetectedBrowser != 'chrome')" tooltip="{{ mutingCam && ('conference.unmute_cam_tooltip' | translate) || ('conference.mute_cam_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingCam && 'glyphicon-eye-close' || 'glyphicon-eye-open'"></span></button>
     	    <button class="btn btn-default btn-primary navbar-btn" ng-click="showConferenceLink()" tooltip="{{ 'conference.show_link' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-link"></span></button>
-    	    <button class="btn btn-default btn-primary navbar-btn" ng-click="leaveConference()" tooltip="{{ 'conference.leave' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-log-out"></span></button>
+    	    <button class="btn btn-default btn-primary navbar-btn" ng-click="confirmLeaveConference()" tooltip="{{ 'conference.leave' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-remove"></span></button>
     	  </div>
 	</div>
     </div>
@@ -23,30 +23,32 @@
 		    	    <h4>{{bigScreenName | limitTo: 30}}</h4>
 			</div>
 			<div style="padding-right: 10px; width: 25%; vertical-align: middle; float: left;">
-			    <button type="button" class="btn btn-default btn-sm navbar-btn pull-right" ng-click="fullscreen()"><span class="glyphicon glyphicon-fullscreen"></span></button>
+			    <button type="button" class="btn btn-default btn-sm navbar-btn pull-right" ng-click="fullscreen()" tooltip="{{ 'conference.fullscreen_tooltip' | translate }}" tooltip-placement="right"><span class="glyphicon glyphicon-fullscreen"></span></button>
 			    <div class="btn-group pull-right">
-				<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span></button>
+				<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown" tooltip="{{ 'conference.settings_tooltip' | translate }}" tooltip-placement="left"><span class="glyphicon glyphicon-cog"></span></button>
 				<ul class="dropdown-menu" role="menu">
-		    		    <li><div class="input-group"><span class="input-group-addon"><input type="checkbox" ng-model="bigScreenAuto"> {{ 'conference.automatic_video_switching' | translate }}</span></div>
+		    		    <li><div class="input-group"><span class="input-group-addon" ng-click="bigScreenAuto = !bigScreenAuto"><input type="checkbox" ng-model="bigScreenAuto"> {{ 'conference.automatic_video_switching' | translate }}</span></div>
 		    		</ul>
 			    </div>
 			</div>
 		    </div>
-		    <video id="bigScreen" style="width: 100%; max-height: 512px;" autoplay muted  ng-class="{true: 'mirror'}[bigScreenMirror]"/>
+		    <video id="bigScreen" style="width: 100%;" autoplay muted ng-class="{true: 'mirror'}[bigScreenMirror] + ' ' + {true: '', false: 'video-max-height'}[isFullscreen]"/>
 		</div>
 	    </div>
 	</div>
 	<div class="col-md-5 col-sm-12 hidden-xs" style="background: #00555;" ng-controller="ChatCtrl">
 	    <div class="row-fluid" ng-hide="endsAt == 0">
-		<div class="col-md-12 well" style="margin-left: 5px; margin-bottom: 5px;">
-		    <timer ng-attr-end-time="endsAt" max-time-unit="hour" interval="1000">Conference ends in {{hours}} hours, {{minutes}} minutes, {{seconds}} seconds</timer>
+		<div class="col-md-12 well text-center" style="margin-left: 5px; margin-bottom: 5px;">
+		    <span class="glyphicon glyphicon-time"></span>
+		    {{ 'conference.countdown' | translate:countdown }} {{endtimer.seconds}}
+		    <timer ng-attr-end-time="endsAt" max-time-unit="hour" interval="1000">{{ '' }}</timer>
 		</div>
 	    </div>
 	    <div class="row-fluid">
 		<div id="chatMessages" class="col-md-12 well" ng-style="chatMessagesStyle">
 		    <div ng-repeat="message in messages track by $index">
 			<strong>{{message.from}}</strong>
-			{{message.text}}
+			<span ng-bind-html="message.text | linky:{target:'_blank'}"></span>
 		    </div>
 		</div>
 	    </div>

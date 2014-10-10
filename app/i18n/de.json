@@ -58,7 +58,9 @@
 	"start": "Starten",
 	"next": "Weiter",
 	"close": "Schließen",
-	"exit": "Verlassen"
+	"exit": "Verlassen",
+	"ok": "Ok",
+	"cancel": "Abbrechen"
     },
     "chat": {
 	"me": "Ich",
@@ -82,7 +84,13 @@
 	"leave": "Konferenz verlassen.",
 	"show_link": "Gäste einladen",
 	"allow_camera_control_tooltip": "Anderen erlauben meine Kamera zu steuern.",
-	"disallow_camera_control_tooltip": "Anderen nicht erlauben meine Kamera zu steuern."
+	"disallow_camera_control_tooltip": "Anderen nicht erlauben meine Kamera zu steuern.",
+	"fullscreen_tooltip": "Vollbild",
+	"settings_tooltip": "Einstellungen",
+	"onbeforeunload": "Möchten Sie diese Konferenz wirklich verlassen?",
+	"confirm_leave_title": "Raum verlassen?",
+	"confirm_leave_text": "Möchten Sie diese Konferenz wirklich verlassen?",
+	"countdown": "Diese Konferenz endet in {{hours}} Stunden und {{minutes}} Minuten."
     }
 }
 

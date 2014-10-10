@@ -8,6 +8,7 @@ angular.module('ahoyApp', [
   'ui.bootstrap',
   'timer',
   'ngAnimate',
+  'ngSanitize',
   'localytics.directives',
   'pascalprecht.translate'
 ])
