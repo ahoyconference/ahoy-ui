@@ -252,15 +252,16 @@ angular.module('ahoyApp.controllers', [])
     $scope.$on('timer-stopped', function (event, data){
 	$scope.leaveConference();
     });
-
     $scope.countdown = {};
     $scope.$on('timer-tick', function (event, args) {
 	if (event && event.targetScope) {
-	  $scope.$apply(function() {
-	    $scope.countdown.hours = event.targetScope.hours;
-	    $scope.countdown.minutes = event.targetScope.minutes;
-	    $scope.countdown.seconds = event.targetScope.seconds;
-	  });
+	  $timeout(function() {
+	    $scope.$apply(function() {
+	      $scope.countdown.hours = event.targetScope.hours;
+	      $scope.countdown.minutes = event.targetScope.minutes;
+	      $scope.countdown.seconds = event.targetScope.seconds;
+	    });
+	  }, 1);
 	}
     });
 
