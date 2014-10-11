@@ -38,7 +38,7 @@ module.exports = function (grunt) {
 	    ],
 	    dest: 'dist/css/style.css'
 	},
-	vendor: {
+	js: {
 	    src: [
 		"bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js",
 		"bower_components/jquery/dist/jquery.min.js",
@@ -55,12 +55,7 @@ module.exports = function (grunt) {
 		"bower_components/angular-translate/angular-translate.min.js",
 		"bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js",
 		"bower_components/screenfull/dist/screenfull.min.js",
-		"app/lib/js/*.js"
-	    ],
-	    dest: 'dist/js/vendor.js'
-	},
-	app: {
-	    src: [
+		"app/lib/js/*.js",
 		"app/js/*.js"
 	    ],
 	    dest: 'dist/js/app.js'
