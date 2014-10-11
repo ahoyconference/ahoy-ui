@@ -23,13 +23,8 @@
 		    	    <h4>{{bigScreenName | limitTo: 30}}</h4>
 			</div>
 			<div style="padding-right: 10px; width: 25%; vertical-align: middle; float: left;">
-			    <button type="button" class="btn btn-default btn-sm navbar-btn pull-right" ng-click="fullscreen()" tooltip="{{ 'conference.fullscreen_tooltip' | translate }}" tooltip-placement="right"><span class="glyphicon glyphicon-fullscreen"></span></button>
-			    <div class="btn-group pull-right">
-				<button type="button" class="btn btn-default btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown" tooltip="{{ 'conference.settings_tooltip' | translate }}" tooltip-placement="left"><span class="glyphicon glyphicon-cog"></span></button>
-				<ul class="dropdown-menu" role="menu">
-		    		    <li><div class="input-group"><span class="input-group-addon" ng-click="bigScreenAuto = !bigScreenAuto"><input type="checkbox" ng-model="bigScreenAuto"> {{ 'conference.automatic_video_switching' | translate }}</span></div>
-		    		</ul>
-			    </div>
+			    <button class="btn btn-primary navbar-btn pull-right" ng-click="fullscreen()" tooltip="{{ 'conference.fullscreen_tooltip' | translate }}" tooltip-placement="right"><span class="glyphicon glyphicon-fullscreen"></span></button>
+    			    <button class="btn btn-default navbar-btn pull-right" ng-class="{true: 'btn-success', false: 'btn-danger'}[!bigScreenAuto]" ng-click="toggleVideoSwitching()" tooltip="{{ !bigScreenAuto && ('conference.enable_video_switching_tooltip' | translate) || ('conference.disable_video_switching_tooltip' | translate) }}" tooltip-placement="left"><span class="glyphicon" ng-class="!bigScreenAuto && 'glyphicon-bullhorn' || 'glyphicon-pushpin'"></span></button>
 			</div>
 		    </div>
 		    <video id="bigScreen" style="width: 100%;" autoplay muted ng-class="{true: 'mirror'}[bigScreenMirror] + ' ' + {true: '', false: 'video-max-height'}[isFullscreen]"/>

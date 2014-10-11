@@ -91,7 +91,9 @@
 	"onbeforeunload": "Do you really want to leave this conference?",
 	"confirm_leave_title": "Leave conference?",
 	"confirm_leave_text": "Do you really want to leave this conference?",
-	"countdown": "This conference ends in {{hours}} hours and {{minutes}} minutes."
+	"countdown": "This conference ends in {{hours}} hours and {{minutes}} minutes.",
+	"enable_video_switching_tooltip": "Automatically switch to the person speaking.",
+	"disable_video_switching_tooltip": "Do not automatically switch to the person speaking. Select which video to show with your mouse."
     }
 }
 

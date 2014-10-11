@@ -384,6 +384,10 @@ angular.module('ahoyApp.controllers', [])
 	ahoyService.kickMember(member);
     }
 
+    $scope.toggleVideoSwitching = function() {
+	$scope.bigScreenAuto = !$scope.bigScreenAuto;
+    }
+
     $scope.preferences = preferences;
 
     // handle conference events

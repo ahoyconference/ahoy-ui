@@ -90,7 +90,9 @@
 	"onbeforeunload": "Möchten Sie diese Konferenz wirklich verlassen?",
 	"confirm_leave_title": "Raum verlassen?",
 	"confirm_leave_text": "Möchten Sie diese Konferenz wirklich verlassen?",
-	"countdown": "Diese Konferenz endet in {{hours}} Stunden und {{minutes}} Minuten."
+	"countdown": "Diese Konferenz endet in {{hours}} Stunden und {{minutes}} Minuten.",
+	"enable_video_switching_tooltip": "Automatisch auf den aktiven Sprecher umschalten.",
+	"disable_video_switching_tooltip": "Nicht automatisch auf den aktiven Sprecher umschalten."
     }
 }
 
