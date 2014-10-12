@@ -38,7 +38,7 @@ angular.module('ahoyApp.controllers', [])
 	  },
 	  function(status, reconnect) {
 	    if (status == 404) {
-		ahoyService.showErrorDialog($scope, "join.unknown_conference_title", "join.unknown_conference.text");
+		ahoyService.showErrorDialog($scope, "join.unknown_conference_title", "join.unknown_conference_text");
 	    } else if (status == 403) {
 		ahoyService.showErrorDialog($scope, "join.wrong_password_title", "join.wrong_password_text");
 	        $scope.$apply(function() {
