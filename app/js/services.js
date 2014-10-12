@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ahoyApp.services', [])
-    .service('ahoyService', ["$modal", "$translate", function($modal, $translate) {
+    .service('ahoyService', ["$modal", "$translate", "AHOY_CONFIG", function($modal, $translate, AHOY_CONFIG) {
       var self = this;
       var activeConference = false;
       var activeMedia = false;
@@ -34,10 +34,14 @@ angular.module('ahoyApp.services', [])
       var wsUrl;
 
       function resetWsUrl() {
-        if (document.location.href.indexOf("ttp://") > 0) {
-	    wsUrl = "ws://"+document.location.href.substring(7, document.location.href.indexOf("/", 7));
-	} else if (document.location.href.indexOf("ttps://") > 0) {
-    	    wsUrl = "wss://"+document.location.href.substring(8, document.location.href.indexOf("/", 8));
+        if (AHOY_CONFIG.wsUrl) {
+    	    wsUrl = AHOY_CONFIG.wsUrl;
+        } else {
+    	    if (document.location.href.indexOf("ttp://") > 0) {
+		wsUrl = "ws://"+document.location.href.substring(7, document.location.href.indexOf("/", 7));
+	    } else if (document.location.href.indexOf("ttps://") > 0) {
+    		wsUrl = "wss://"+document.location.href.substring(8, document.location.href.indexOf("/", 8));
+    	    }
         }
 
 	preferences.wsUrl = wsUrl;

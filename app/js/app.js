@@ -2,6 +2,7 @@
 
 
 angular.module('ahoyApp', [
+  'ahoyApp.config',
   'ahoyApp.services',
   'ahoyApp.controllers',
   'ui.router',
@@ -32,8 +33,8 @@ angular.module('ahoyApp', [
   ]
 )
 .config(
-  [ '$stateProvider', '$urlRouterProvider', '$translateProvider',
-    function ($stateProvider, $urlRouterProvider, $translateProvider) {
+  [ '$stateProvider', '$urlRouterProvider', '$translateProvider', 'AHOY_CONFIG',
+    function ($stateProvider, $urlRouterProvider, $translateProvider, AHOY_CONFIG) {
 
       $stateProvider
         .state("joinRoom", {
@@ -52,12 +53,6 @@ angular.module('ahoyApp', [
           url: '/join?lang',
           templateUrl: 'tpl/join.html',
           controller: 'JoinCtrl'
-        })
-
-        .state("start", {
-          url: '/start?lang',
-          templateUrl: 'tpl/start.html',
-          controller: 'StartCtrl'
         })
 
         .state("mediasharing", {
@@ -84,9 +79,20 @@ angular.module('ahoyApp', [
           controller: 'ViewCtrl'
         })
 
+      if (AHOY_CONFIG.allow_dynamic_conferences) {
+        $stateProvider
+          .state("start", {
+            url: '/start?lang',
+            templateUrl: 'tpl/start.html',
+            controller: 'StartCtrl'
+          })
 
-      $urlRouterProvider
-        .otherwise('/start');
+        $urlRouterProvider
+          .otherwise('/start');
+      } else {
+        $urlRouterProvider
+          .otherwise('/join');
+      }
 
       $translateProvider.useStaticFilesLoader({
           prefix: 'i18n/',

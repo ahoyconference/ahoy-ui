@@ -24,6 +24,11 @@ module.exports = function (grunt) {
 		{ expand: true, cwd: 'app', src: ['tpl/*'], dest: 'dist/'},
 		{ expand: true, cwd: 'app', src: ['*.html'], dest: 'dist/'}
 	    ]
+	},
+	config: {
+	    files: [
+		{ expand: true, cwd: 'app/', src: ['config.js'], dest: 'dist/'},
+	    ]
 	}
     },
     concat: {
