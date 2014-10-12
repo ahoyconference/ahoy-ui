@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ahoyApp.controllers', [])
-  .controller('JoinCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', function($scope, $state, $stateParams, $timeout, $translate, ahoyService) {
+  .controller('JoinCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', 'AHOY_CONFIG', function($scope, $state, $stateParams, $timeout, $translate, ahoyService, AHOY_CONFIG) {
     console.log('JoinCtrl language: ' + $stateParams.lang);
     if ($stateParams.lang) {
 	$translate.use($stateParams.lang);
@@ -11,6 +11,7 @@ angular.module('ahoyApp.controllers', [])
       return;
     }
 
+    $scope.AHOY_CONFIG = AHOY_CONFIG;
     $scope.transmitOnly = false;
     $scope.captureHdVideo = false;
     $scope.room = $stateParams.room;
@@ -220,7 +221,7 @@ angular.module('ahoyApp.controllers', [])
     }
   }])
 
-  .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', '$translate', 'ahoyService', function($scope, $state, $stateParams, $timeout, $modal, $translate, ahoyService) {
+  .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', '$translate', 'ahoyService', 'AHOY_CONFIG',  function($scope, $state, $stateParams, $timeout, $modal, $translate, ahoyService, AHOY_CONFIG) {
     console.log('ConferenceCtrl');
 
     if (ahoyService.inConference() != true) {
@@ -236,6 +237,7 @@ angular.module('ahoyApp.controllers', [])
     }
 
     var preferences = ahoyService.getPreferences();
+    $scope.AHOY_CONFIG = AHOY_CONFIG;
     $scope.sharingCameraControl = false;
     $scope.sharingMic = ahoyService.sharingAudio();
     $scope.sharingCam = ahoyService.sharingVideo();
@@ -360,7 +362,11 @@ angular.module('ahoyApp.controllers', [])
       window.onbeforeunload = null;
       document.removeEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
       ahoyService.leaveConference();
-      $state.transitionTo('start');
+      if (AHOY_CONFIG.allow_dynamic_conferences) {
+	$state.transitionTo('start');
+      } else {
+	$state.transitionTo('join');
+      }
     }
     
     $scope.toggleConferenceLock = function() {

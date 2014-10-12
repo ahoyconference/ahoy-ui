@@ -23,7 +23,7 @@
 		    <button class="btn btn-primary btn-block" ng-disabled="form.$invalid" translate="button.next">Next</button>
 		</div>
 		</fieldset>
-		<p class="text-center"><a href="#start" translate="join.start_conference">or start a new conference</a></p>
+		<p class="text-center" ng-show="AHOY_CONFIG.allow_dynamic_conferences"><a href="#start" translate="join.start_conference">or start a new conference</a></p>
 	      </form>
 	    </div>
 	</div>
