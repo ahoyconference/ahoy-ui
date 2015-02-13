@@ -17,7 +17,6 @@
     "angular-timer": "1.1.6",
     "angular-translate": "2.4.0",
     "angular-translate-loader-static-files": "2.4.0",
-    "jquery": "2.1.1",
     "bootstrap": "3.1.1",
     "chosen": "https://github.com/harvesthq/chosen/releases/download/v1.1.0/chosen_v1.1.0.zip",
     "angular-chosen-localytics": "1.0.6",
