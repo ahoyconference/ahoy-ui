@@ -9,6 +9,7 @@ angular.module('ahoyApp.services', [])
       var transmitOnly = false;
       var preferences = {};
       preferences.room = '';
+      preferences.conferenceID = '';
       preferences.name = '';
       preferences.password = '';
       preferences.shareVideo = false;
@@ -395,7 +396,12 @@ angular.module('ahoyApp.services', [])
 	      switch (msg.messageType) {
 	        case "CONFERENCE_JOIN_response":
 		  if (msg.status == 200) {
-		    preferences.room = msg.conferenceID;
+		    if (msg.conferenceName && msg.conferenceName.length) {
+			preferences.room = msg.conferenceName;
+		    } else {
+			preferences.room = msg.conferenceID;
+		    }
+		    preferences.conferenceID = msg.conferenceID;
 		    preferences.password = password;
 		    preferences.speaker = msg.speaker;
 		    preferences.moderator = msg.moderator;
@@ -629,7 +635,7 @@ angular.module('ahoyApp.services', [])
 	try {
 	    ws.onopen = function() {
 	      console.log("onopen: connected to "+wsUrl);
-	      ws.send(JSON.stringify({messageType:"CONFERENCE_CREATE_request", password: password, moderatorPassword: moderatorpassword, listenerPassword: generateTransactionID(), conferenceID: room, transactionID: generateTransactionID()}));
+	      ws.send(JSON.stringify({messageType:"CONFERENCE_CREATE_request", conferenceName: room, password: password, moderatorPassword: moderatorpassword, listenerPassword: generateTransactionID(), transactionID: generateTransactionID()}));
 	    } 
 
 	   ws.onclose = function(error){
@@ -641,6 +647,7 @@ angular.module('ahoyApp.services', [])
 	      if (msg.messageType == "CONFERENCE_CREATE_response") {
 		if (msg.status == 200) {
 		  preferences.room = msg.conferenceID;
+		  preferences.conferenceID = msg.conferenceID;
 		  preferences.password = moderatorpassword;
 		  ws.onclose = null;
 		  ws.close();
@@ -791,6 +798,7 @@ angular.module('ahoyApp.services', [])
         activeConference = false;
         preferences.sharingAudio = false;
         preferences.room = '';
+        preferences.conferenceID = '';
         preferences.name = '';
         preferences.password = '';
         preferences.shareVideo = false;

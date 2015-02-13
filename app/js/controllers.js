@@ -78,7 +78,7 @@ angular.module('ahoyApp.controllers', [])
     }
 
     $scope.joinConference = function() {
-	ahoyService.joinConference($scope.room, $scope.name, $scope.password, false, false,
+	ahoyService.joinConference($scope.conferenceID, $scope.name, $scope.password, false, false,
 	    function(ws, speaker) {
 		$translate("conference.onbeforeunload").then(function (translation) {
 		    window.onbeforeunload = function() {
@@ -106,7 +106,7 @@ angular.module('ahoyApp.controllers', [])
 	ahoyService.startConference($scope.room, $scope.name, $scope.password, $scope.moderatorpassword,
 	  function(conferenceID) {
 	    $scope.$apply(function() {
-		$scope.room = conferenceID;
+		$scope.conferenceID = conferenceID;
 		if ($scope.moderatorpassword != undefined) {
 		    $scope.password = $scope.moderatorpassword;
 		}
@@ -487,7 +487,7 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.showConferenceLink = function() {
 	console.log("showConferenceLink");
-	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + escape($scope.preferences.room) + "?lang="+$translate.use();
+	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + escape($scope.preferences.conferenceID) + "?lang="+$translate.use();
 	var modalInstance = $modal.open({
 	    templateUrl: 'tpl/showLinkModal.html',
 	    size: "lg",
