@@ -150,11 +150,20 @@ angular.module('ahoyApp.services', [])
 			    sessionDescription.sdp = processSdp(sessionDescription.sdp);
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    peer_connection.onicecandidate = function(event) {
-					if (!event.candidate) {
-					    ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    if (webrtcDetectedBrowser == "firefox") {
+					// a) if firefox cannot reach the mozilla stun server the local candidate gathering will timeout after 20 seconds.
+					// b) if we do not send the SDP answer to the ahoyconference server it cannot verify the stun credentials and has to ignore binding requests.
+					// if a) and b) are tuue then firefox will throw an "ICE failed" error and we cannot use the peerconnection. that is why we sent out the SDP answer immediately.
+					ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    } else {
+					// for chrome we need to wait until all candidates have been gathered or it will not consider TCP candidates reliably.
+					peer_connection.onicecandidate = function(event) {
+					    if (!event.candidate) {
+						ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+					    }
 					}
 				    }
+
 				},
 				function() {
 				    console.log("setLocalSessionDescription: ERROR");
@@ -178,9 +187,17 @@ angular.module('ahoyApp.services', [])
 			function(sessionDescription) { 
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    peer_connection.onicecandidate = function(event) {
-					if (!event.candidate) {
-					    ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    if (webrtcDetectedBrowser == "firefox") {
+					// a) if firefox cannot reach the mozilla stun server the local candidate gathering will timeout after 20 seconds.
+					// b) if we do not send the SDP answer to the ahoyconference server it cannot verify the stun credentials and has to ignore binding requests.
+					// if a) and b) are tuue then firefox will throw an "ICE failed" error and we cannot use the peerconnection. that is why we sent out the SDP answer immediately.
+					ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+				    } else {
+					// for chrome we need to wait until all candidates have been gathered or it will not consider TCP candidates reliably.
+					peer_connection.onicecandidate = function(event) {
+					    if (!event.candidate) {
+						ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
+					    }
 					}
 				    }
 				},
