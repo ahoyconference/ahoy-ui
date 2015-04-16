@@ -39,8 +39,8 @@
 	"bandwidth_slow": "langsam (ADSL, Handy weniger als 0,5 Mbit/s)",
 	"awww_snap": "Oh wie schade! :-(",
 	"no_webrtc": "Ihr Browser beherrscht kein WebRTC.",
-	"install_webrtc_plugin_p1": "Bitte installieren Sie das ",
-	"install_webrtc_plugin_p2": " oder benutzen Sie einen unterstützenden Browser.",
+	"install_webrtc_plugin": "Bitte installieren Sie das Temasys WebRTC Plugin oder benutzen Sie einen unterstützenden Browser. ",
+	"install_webrtc_plugin_link": "Jetzt Plugin installieren",
 	"install_webrtc_plugin_restart_browser": "Falls Sie das Plugin installieren, starten Sie Ihren Browser bitte anschließend neu.",
 	"supported_browsers": "Wir empfehlen die stabilen Versionen von Google Chrome, Opera oder Mozilla Firefox (in dieser Reihenfolge)",
 	"chat_only": "Sie können jetzt nur per Textchat an dieser Konferenz teilnehmen."

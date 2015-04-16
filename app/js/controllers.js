@@ -31,7 +31,7 @@ angular.module('ahoyApp.controllers', [])
 		if (AdapterJS.onwebrtcreadyDone) {
 		    $state.transitionTo('mediasharing');
 		} else {
-		    $state.transitionTo('nousermedia');
+		    $state.transitionTo('nousermedia_plugin');
 		}
 	    } else {
 		$state.transitionTo('conference');
@@ -88,7 +88,7 @@ angular.module('ahoyApp.controllers', [])
 		if (AdapterJS.onwebrtcreadyDone) {
 		    $state.transitionTo('mediasharing');
 		} else {
-		    $state.transitionTo('nousermedia');
+		    $state.transitionTo('nousermedia_plugin');
 		}
 	    },
 	    function(status, reconnect) {
@@ -139,6 +139,7 @@ angular.module('ahoyApp.controllers', [])
       return;
     }
     
+	$scope.temasysPluginUrl = AdapterJS.WebRTCPlugin.pluginInfo.downloadLink;
     $scope.optionsList = [
 	{val: '1000', translationKey: 'mediashare.bandwidth_fast'},
 	{val: '500', translationKey: 'mediashare.bandwidth_standard'},
@@ -223,11 +224,7 @@ angular.module('ahoyApp.controllers', [])
     
 	if (AdapterJS.onwebrtcreadyDone) {
 	$scope.shareMedia(true, true);
-    } else {
-	document.getElementById('temasysPluginLink').innerHTML = '<a href="' + AdapterJS.WebRTCPlugin.pluginInfo.portalLink + 
-											'" target="_blank">' + AdapterJS.WebRTCPlugin.pluginInfo.companyName +
-											' WebRTC Plugin</a>';
-	}
+    }
   }])
 
   .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', '$translate', 'ahoyService', 'AHOY_CONFIG',  function($scope, $state, $stateParams, $timeout, $modal, $translate, ahoyService, AHOY_CONFIG) {
