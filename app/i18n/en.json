@@ -40,6 +40,9 @@
 	"bandwidth_slow": "slow (adsl, mobile less than 0.5 Mbit/s)",
 	"awww_snap": "Awww snap! :-(",
 	"no_webrtc": "Your browser does not support WebRTC.",
+	"install_webrtc_plugin_p1": "Please install the ",
+	"install_webrtc_plugin_p2": " or use a supporting browser.",
+	"install_webrtc_plugin_restart_browser": "If you choose the plugin, please restart your browser after installation.",
 	"supported_browsers": "We recommend the stable versions of Google Chrome, Opera or Mozilla Firefox (in that order).",
 	"chat_only": "If you join the conference anyway you will be limited to text chat."
     },

@@ -28,7 +28,7 @@ angular.module('ahoyApp.controllers', [])
 	      }
 	    });
 	    if (speaker) {
-		if (webrtcDetectedBrowser != "none") {
+		if (AdapterJS.onwebrtcreadyDone) {
 		    $state.transitionTo('mediasharing');
 		} else {
 		    $state.transitionTo('nousermedia');
@@ -85,7 +85,7 @@ angular.module('ahoyApp.controllers', [])
 			return translation; 
 		    }
 		});
-		if (webrtcDetectedBrowser != "none") {
+		if (AdapterJS.onwebrtcreadyDone) {
 		    $state.transitionTo('mediasharing');
 		} else {
 		    $state.transitionTo('nousermedia');
@@ -221,9 +221,13 @@ angular.module('ahoyApp.controllers', [])
 	}
     }
     
-    if (webrtcDetectedBrowser != "none") {
+	if (AdapterJS.onwebrtcreadyDone) {
 	$scope.shareMedia(true, true);
-    }
+    } else {
+	document.getElementById('temasysPluginLink').innerHTML = '<a href="' + AdapterJS.WebRTCPlugin.pluginInfo.portalLink + 
+											'" target="_blank">' + AdapterJS.WebRTCPlugin.pluginInfo.companyName +
+											' WebRTC Plugin</a>';
+	}
   }])
 
   .controller('ConferenceCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$modal', '$translate', 'ahoyService', 'AHOY_CONFIG',  function($scope, $state, $stateParams, $timeout, $modal, $translate, ahoyService, AHOY_CONFIG) {
