@@ -6,28 +6,32 @@
     	  <div class="navbar-right navbar-btn">
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[preferences.conferenceLocked]" ng-click="toggleConferenceLock()" ng-hide="!localMember.moderator" tooltip="{{ preferences.conferenceLocked && ('conference.unlock_tooltip' | translate) || ('conference.lock_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="preferences.conferenceLocked && 'glyphicon-globe' || 'glyphicon-lock'"></span></button>
     	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingCameraControl]" ng-click="toggleCameraControl()" ng-hide="!localMember.haveCameraControl" tooltip="{{ sharingCameraControl && ('conference.disallow_camera_control_tooltip' | translate) || ('conference.allow_camera_control_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!sharingCameraControl && 'glyphicon-record' || 'glyphicon-ban-circle'"></span></button>
-    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingMic]" ng-click="toggleMuteMic()" ng-hide="!sharingMic || (webrtcDetectedBrowser != 'chrome')" tooltip="{{ mutingMic && ('conference.unmute_mic_tooltip' | translate) || ('conference.mute_mic_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingMic && 'glyphicon-volume-off' || 'glyphicon-volume-up'"></span></button>
-    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingCam]" ng-click="toggleMuteCam()" ng-hide="!sharingCam || (webrtcDetectedBrowser != 'chrome')" tooltip="{{ mutingCam && ('conference.unmute_cam_tooltip' | translate) || ('conference.mute_cam_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingCam && 'glyphicon-eye-close' || 'glyphicon-eye-open'"></span></button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingMic]" ng-click="toggleMuteMic()" ng-hide="!sharingMic || !isAbleToMuteMic" tooltip="{{ mutingMic && ('conference.unmute_mic_tooltip' | translate) || ('conference.mute_mic_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingMic && 'glyphicon-volume-off' || 'glyphicon-volume-up'"></span></button>
+    	    <button class="btn btn-default navbar-btn" ng-class="{true: 'btn-success', false: 'btn-danger'}[mutingCam]" ng-click="toggleMuteCam()" ng-hide="!sharingCam || !isAbleToMuteCam" tooltip="{{ mutingCam && ('conference.unmute_cam_tooltip' | translate) || ('conference.mute_cam_tooltip' | translate) }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg" ng-class="!mutingCam && 'glyphicon-eye-close' || 'glyphicon-eye-open'"></span></button>
     	    <button class="btn btn-default btn-primary navbar-btn" ng-click="showConferenceLink()" tooltip="{{ 'conference.show_link' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-link"></span></button>
     	    <button class="btn btn-default btn-primary navbar-btn" ng-click="confirmLeaveConference()" tooltip="{{ 'conference.leave' | translate }}" tooltip-placement="bottom"><span class="glyphicon glyphicon-lg glyphicon-remove"></span></button>
     	  </div>
 	</div>
     </div>
     <div class="row" style="display: flex;">
-	<div class="col-md-7 col-sm-12 col-xs-12" style="padding-left: 0px; padding-right: 0px; background: #00550;">
-	    <div class="wrapper-4-by-3">
-		<div class="element-with-aspect-ratio">
-		    <div class="video_overlay" style="color: #fcfcfc; background: #005c97;">
-			<div style="width: 25%; vertical-align: middle; float: left;">&nbsp;</div>
-			<div class="text-center" style="width: 50%; vertical-align: middle; float: left;">
-		    	    <h4>{{bigScreenName | limitTo: 30}}</h4>
+	<div ng-repeat="(memberID, bigMember) in bigMembers track by memberID | orderBy:'name':reverse" class="col-md-7 col-sm-12 col-xs-12" style="padding-left: 0px; padding-right: 0px;">
+	    <div style="padding: 0px; margin: 0px; width: 100%; height: 100%;">
+		<div class="wrapper-4-by-3">
+		    <div class="element-with-aspect-ratio">
+			<div class="video_overlay" style="color: #fcfcfc; background: #005c97;">
+			    <div style="width: 25%; vertical-align: middle; float: left;">&nbsp;</div>
+			    <div class="text-center" style="width: 50%; vertical-align: middle; float: left;">
+		    		<h4>{{bigMember.name | limitTo: 30}}</h4>
+			    </div>
+			    <div style="padding-right: 10px; width: 25%; vertical-align: middle; float: left;">
+				<button ng-show="allowFullscreen" class="btn btn-primary navbar-btn pull-right" ng-click="fullscreen()" tooltip="{{ 'conference.fullscreen_tooltip' | translate }}" tooltip-placement="right"><span class="glyphicon glyphicon-fullscreen"></span></button>
+    				<button class="btn btn-default navbar-btn pull-right" ng-class="{true: 'btn-success', false: 'btn-danger'}[!bigScreenAuto]" ng-click="toggleVideoSwitching()" tooltip="{{ !bigScreenAuto && ('conference.enable_video_switching_tooltip' | translate) || ('conference.disable_video_switching_tooltip' | translate) }}" tooltip-placement="left"><span class="glyphicon" ng-class="!bigScreenAuto && 'glyphicon-bullhorn' || 'glyphicon-pushpin'"></span></button>
+			    </div>
 			</div>
-			<div style="padding-right: 10px; width: 25%; vertical-align: middle; float: left;">
-			    <button class="btn btn-primary navbar-btn pull-right" ng-click="fullscreen()" tooltip="{{ 'conference.fullscreen_tooltip' | translate }}" tooltip-placement="right"><span class="glyphicon glyphicon-fullscreen"></span></button>
-    			    <button class="btn btn-default navbar-btn pull-right" ng-class="{true: 'btn-success', false: 'btn-danger'}[!bigScreenAuto]" ng-click="toggleVideoSwitching()" tooltip="{{ !bigScreenAuto && ('conference.enable_video_switching_tooltip' | translate) || ('conference.disable_video_switching_tooltip' | translate) }}" tooltip-placement="left"><span class="glyphicon" ng-class="!bigScreenAuto && 'glyphicon-bullhorn' || 'glyphicon-pushpin'"></span></button>
+			<div style="width: 100%; height: 100%;" ng-class="{true: 'mirror'}[bigScreenMirror] + ' ' + {true: '', false: ''}[isFullscreen]">
+			    <video id="bigScreen" width="100%" height="100%" autoplay muted/>
 			</div>
 		    </div>
-		    <video id="bigScreen" style="width: 100%;" autoplay muted ng-class="{true: 'mirror'}[bigScreenMirror] + ' ' + {true: '', false: 'video-max-height'}[isFullscreen]"/>
 		</div>
 	    </div>
 	</div>
@@ -81,7 +85,9 @@
 			    </div>
 			</div>
 		    </div>
-		    <video id="video-{{member.memberID}}" style="width: 100%;" ng-class="{true:'mirror'}[member.mirror]" autoplay/>
+		    <div  style="width: 100%; height: 100%;" ng-class="{true:'mirror'}[member.mirror]">
+			<video id="video-{{member.memberID}}" width="100%" height="100%" autoplay/>
+		    </div>
 		</div>
 	    </div>
 	</div>

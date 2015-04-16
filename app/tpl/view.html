@@ -1,5 +1,13 @@
-<div class="wrapper-16-by-9" style="padding: 0px; margin: 0px; width: 100%; background: #000000;">
-    <div class="element-with-aspect-ratio text-center">
-	<video id="bigScreen" style="width: 100%;" autoplay/>
+<div ng-repeat="(memberID, bigMember) in bigMembers track by memberID | orderBy:'name':reverse" style="padding-left: 0px; padding-right: 0px; width: 100%; height: 100%; background: #000000;">
+    <div style="padding: 0px; margin: 0px; width: 100%; height: 100%;">
+	<div class="video_overlay" style="color: #fcfcfc; background: #005c97;">
+		<div style="width: 25%; vertical-align: middle; float: left;">&nbsp;</div>
+		<div class="text-center" style="width: 50%; vertical-align: middle; float: left;">
+		    <h4>{{bigMember.name | limitTo: 30}}</h4>
+		</div>
+	</div>
+	<div style="width: 100%; height: 100%;">
+	    <video id="bigScreen" width="100%" height="100%" autoplay muted/>
+	</div>
     </div>
 </div>

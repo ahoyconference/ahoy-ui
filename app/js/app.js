@@ -8,7 +8,6 @@ angular.module('ahoyApp', [
   'ui.router',
   'ui.bootstrap',
   'timer',
-  'ngAnimate',
   'ngSanitize',
   'localytics.directives',
   'pascalprecht.translate'
@@ -64,6 +63,12 @@ angular.module('ahoyApp', [
         .state("nousermedia", {
           url: '/nousermedia',
           templateUrl: 'tpl/nousermedia.html',
+          controller: 'MediaShareCtrl'
+        })
+		
+		.state("nousermedia_plugin", {
+          url: '/nousermedia_plugin',
+          templateUrl: 'tpl/nousermedia_plugin.html',
           controller: 'MediaShareCtrl'
         })
         
