@@ -7,7 +7,9 @@
 	    <div class="panel-body">
 		<fieldset>
 		<div class="text-center">
-		    <video id="localVideo" width="320" height="240" class="ng-show mirror" ng-hide="!sharingCam" autoplay muted/>
+		    <div class="ng-show mirror" ng-hide="!sharingCam">
+			<video id="localVideo" width="320" height="240" autoplay muted/>
+		    </div>
 		</div>
 		<div>
 		    <button class="btn pull-left" ng-class="{true: 'btn-success', false: 'btn-danger'}[!sharingCam]" ng-click="toggleShareCam()" ng-disabled="requestingMedia">{{!sharingCam && ('button.enable_cam' | translate) || ('button.disable_cam' | translate)}}</button>

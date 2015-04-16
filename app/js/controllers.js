@@ -161,12 +161,14 @@ angular.module('ahoyApp.controllers', [])
 	ahoyService.shareMedia(audio, video,
 	  function(stream) {
 	    if (stream) {
-	      attachMediaStream(localVideo, stream, true);
 	      $timeout(function() {
     	        $scope.$apply(function() {
     		  $scope.requestingMedia = false;
     		  $scope.sharingMic = ahoyService.sharingAudio();
 		  $scope.sharingCam = ahoyService.sharingVideo();
+	    	  $timeout(function() {
+	    	    attachMediaStream(localVideo, stream);
+	    	  }, 1);
 		  return;
     	        });
 	      }, 1);
@@ -208,7 +210,10 @@ angular.module('ahoyApp.controllers', [])
     }
     
     $scope.next = function() {
-	detachMediaStream(localVideo);
+	if (webrtcDetectedBrowser == "firefox") {
+	    localVideo.pause();
+	    localVideo.mozSrcObject = null;
+	}
 	if (ahoyService.isTransmitOnly()) {
 	    $state.transitionTo("transmit");
 	} else {
@@ -246,10 +251,20 @@ angular.module('ahoyApp.controllers', [])
     $scope.webrtcDetectedBrowser = webrtcDetectedBrowser;
     $scope.bigScreenAuto = true;
     $scope.bigScreenLock = false;
-    $scope.bigScreenMirror = true;
+    $scope.bigScreenMirror = false;
     $scope.localMember = ahoyService.getLocalMember();;
     $scope.members = ahoyService.getMembers();
+    $scope.bigMember = { name: "" };
+    $scope.bigMembers = { "bigMember":  $scope.bigMember };
     $scope.endsAt = ahoyService.getEndsAt();
+    $scope.allowFullscreen = false;
+    $scope.isPlugin = false;
+    $scope.isAbleToMuteMic = ahoyService.isAbleToMuteMic();
+    $scope.isAbleToMuteCam = ahoyService.isAbleToMuteCam();
+    if ((webrtcDetectedBrowser == "safari") || (webrtcDetectedBrowser == "IE")) {
+	$scope.isPlugin = true;
+    }
+
 
     $scope.$on('timer-stopped', function (event, data){
 	$scope.leaveConference();
@@ -360,7 +375,9 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.leaveConference = function() {
       window.onbeforeunload = null;
-      document.removeEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
+      if ($scope.allowFullscreen) {
+	document.removeEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
+      }
       ahoyService.leaveConference();
       if (AHOY_CONFIG.allow_dynamic_conferences) {
 	$state.transitionTo('start');
@@ -397,8 +414,7 @@ angular.module('ahoyApp.controllers', [])
     $scope.preferences = preferences;
 
     // handle conference events
-    ahoyService.registerConferenceEventListener(function(msg) {
-      console.log("conference event handler: "+JSON.stringify(msg));
+    function conferenceEventListener(msg) {
       switch (msg.messageType) {
         case "CONFERENCE_JOIN_indication":
     	    broadcastCameraControl();
@@ -408,15 +424,13 @@ angular.module('ahoyApp.controllers', [])
     	        $scope.$apply(function() {
     	    	    var video = document.getElementById('video-'+msg.memberID);
     	    	    if (video) {
-    	    		var pauseBeforePlay = false;
     			if ($scope.localMember.memberID == msg.memberID) {
     			    video.muted = true;
-    			    pauseBeforePlay = false;
     			} else {
     			    video.muted = false;
     			}
     			console.log("attaching stream to video "+msg.memberID);
-    			attachMediaStream(video, msg.stream, pauseBeforePlay);
+    			attachMediaStream(video, msg.stream);
     	    	    }
     	    	});
     	    }, 1);
@@ -431,12 +445,10 @@ angular.module('ahoyApp.controllers', [])
 	    }
           break;
       }
-    });
+    }
 
-    ahoyService.registerScopeListener(function(msg) {
-	scopeApply();
-    });
-
+    ahoyService.registerConferenceEventListener(conferenceEventListener);
+    ahoyService.registerScopeListener(scopeApply);
 
     $scope.putOnBigScreen = function(memberID) {
 	console.log("$scope.putOnBigScreen: "+memberID);
@@ -458,12 +470,28 @@ angular.module('ahoyApp.controllers', [])
       var member = ahoyService.getMember(memberID);
       if (member.stream) {
         console.log("putting "+member.name+" on the big screen");
-        attachMediaStream(bigScreen, member.stream, true);
-	
+
         $timeout(function() {
           $scope.$apply(function() {
-            $scope.bigScreenName = member.name;
+            if ($scope.isPlugin) {
+        	/* 
+        	    The Temasys plugin replaces the <video> element with an <object> element. It is not possible to replace the video stream, yet. 
+        	    That's why we use Angular to remove the old element and add a fresh one.
+        	*/
+		$scope.bigMembers = {};;
+	        $scope.bigMembers[member.memberID] = member;
+    	    } else {
+		$scope.bigMember = member;
+		$scope.bigMembers["bigMember"] = member;
+            }
 	    $scope.bigScreenMirror = mirror;
+    	    $timeout(function() {
+        	$scope.$apply(function() {
+        	    bigScreen = document.getElementById('bigScreen');
+        	    attachMediaStream(bigScreen, member.stream);
+        	});
+    	    }, 1);
+
           });
         }, 1);
       }
@@ -477,12 +505,18 @@ angular.module('ahoyApp.controllers', [])
 	    $scope.isFullscreen = screenfull.isFullscreen;
 	});
     }
-
-    document.addEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
+    if (window.screenfull != undefined) {
+	if (!$scope.isPlugin) {
+	    $scope.allowFullscreen = true;
+	    document.addEventListener(screenfull.raw.fullscreenchange, $scope.fullscreenListener);
+	}
+    }
     $scope.fullscreen = function() {
-	if (screenfull.enabled) {
-    	    screenfull.request(bigScreen);
-        }
+        if ($scope.allowFullscreen) {
+	    if (screenfull.enabled) {
+    		screenfull.request(bigScreen);
+    	    }
+    	}
     }
     
     $scope.showConferenceLink = function() {
@@ -518,7 +552,6 @@ angular.module('ahoyApp.controllers', [])
     ahoyService.registerControlMessageListener(function(msg) {
       try {
          var text_json = JSON.parse(msg.message.text);
-         console.log("control message handler: "+JSON.stringify(text_json));
 	 if (text_json.control) {
 	    if (text_json.control.camera) {
 		if (text_json.control.member.memberID == $scope.localMember.memberID) {
@@ -610,7 +643,6 @@ angular.module('ahoyApp.controllers', [])
     }
 
     ahoyService.registerChatMessageListener(function(msg) {
-      console.log("chat handler: "+JSON.stringify(msg));
       try {
          var text_json = JSON.parse(msg.message.text);
           self.addChatMessage(msg.from.name, text_json.chat, true);
@@ -619,7 +651,6 @@ angular.module('ahoyApp.controllers', [])
     });
 
     ahoyService.registerStatusMessageListener(function(msg) {
-      console.log("status handler: "+JSON.stringify(msg));
       self.addStatusMessage(msg.text, false);
     });
 
@@ -634,7 +665,13 @@ angular.module('ahoyApp.controllers', [])
     $scope.webrtcDetectedBrowser = webrtcDetectedBrowser;
     $scope.bigScreenAuto = true;
     $scope.bigScreenLock = false;
-    $scope.bigScreenMirror = false;
+    $scope.bigMember = { name: "" };
+    $scope.bigMembers = { "bigMember":  $scope.bigMember };
+
+    $scope.isPlugin = false;
+    if ((webrtcDetectedBrowser == "safari") || (webrtcDetectedBrowser == "IE")) {
+	$scope.isPlugin = true;
+    }
 
     $scope.localMember = ahoyService.getLocalMember();;
     $scope.members = ahoyService.getMembers();
@@ -675,17 +712,35 @@ angular.module('ahoyApp.controllers', [])
       if (bigScreenMemberID == memberID) {
         return;
       }
-      var member = ahoyService.getMember(memberID);
-      if (member && member.stream) {
-        attachMediaStream(bigScreen, member.stream, true);
-	bigScreenMemberID = memberID;
-      }
-    }
 
-    $scope.fullscreen = function() {
-	if (screenfull.enabled) {
-    	    screenfull.request(bigScreen);
-        }
+      var member = ahoyService.getMember(memberID);
+      if (member.stream) {
+        console.log("putting "+member.name+" on the big screen");
+
+        $timeout(function() {
+          $scope.$apply(function() {
+            if ($scope.isPlugin) {
+        	/* 
+        	    The Temasys plugin replaces the <video> element with an <object> element. It is not possible to replace the video stream, yet. 
+        	    That's why we use Angular to remove the old element and add a fresh one.
+        	*/
+		$scope.bigMembers = {};;
+	        $scope.bigMembers[member.memberID] = member;
+    	    } else {
+		$scope.bigMember = member;
+		$scope.bigMembers["bigMember"] = member;
+            }
+            $timeout(function() {
+        	$scope.$apply(function() {
+        	    bigScreen = document.getElementById('bigScreen');
+        	    attachMediaStream(bigScreen, member.stream);
+        	});
+    	    }, 1);
+
+          });
+        }, 1);
+      }
+      bigScreenMemberID = memberID;
     }
 
     $scope.joinConference = function() {

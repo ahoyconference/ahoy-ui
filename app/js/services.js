@@ -95,10 +95,13 @@ angular.module('ahoyApp.services', [])
 	    var peer_connection = null;
 	    console.log("createPeerConnection: browser is " + webrtcDetectedBrowser);
 	    try {
+		var pc_config = null;
+		if (AHOY_CONFIG.iceServers != undefined) {
+		    pc_config = { iceServers: AHOY_CONFIG.iceServers };
+		}
 		if (webrtcDetectedBrowser == "firefox") {
-		    peer_connection = new RTCPeerConnection();
+		    peer_connection = new RTCPeerConnection(pc_config);
 		} else {
-		    var pc_config = null;
 		    var pc_constraints = {optional: [{DtlsSrtpKeyAgreement: true}, {googCpuOveruseDetection: true}, {googImprovedWifiBwe: true}]};
 		    peer_connection = new RTCPeerConnection(pc_config, pc_constraints);
 		}
@@ -150,20 +153,7 @@ angular.module('ahoyApp.services', [])
 			    sessionDescription.sdp = processSdp(sessionDescription.sdp);
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    if (webrtcDetectedBrowser == "firefox") {
-					// a) if firefox cannot reach the mozilla stun server the local candidate gathering will timeout after 20 seconds.
-					// b) if we do not send the SDP answer to the ahoyconference server it cannot verify the stun credentials and has to ignore binding requests.
-					// if a) and b) are tuue then firefox will throw an "ICE failed" error and we cannot use the peerconnection. that is why we sent out the SDP answer immediately.
-					ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-				    } else {
-					// for chrome we need to wait until all candidates have been gathered or it will not consider TCP candidates reliably.
-					peer_connection.onicecandidate = function(event) {
-					    if (!event.candidate) {
-						ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-					    }
-					}
-				    }
-
+				    ws.send(JSON.stringify({messageType:"MEDIA_RECEIVE_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
 				},
 				function() {
 				    console.log("setLocalSessionDescription: ERROR");
@@ -187,19 +177,7 @@ angular.module('ahoyApp.services', [])
 			function(sessionDescription) { 
 			    peer_connection.setLocalDescription(sessionDescription, 
 				function() {
-				    if (webrtcDetectedBrowser == "firefox") {
-					// a) if firefox cannot reach the mozilla stun server the local candidate gathering will timeout after 20 seconds.
-					// b) if we do not send the SDP answer to the ahoyconference server it cannot verify the stun credentials and has to ignore binding requests.
-					// if a) and b) are tuue then firefox will throw an "ICE failed" error and we cannot use the peerconnection. that is why we sent out the SDP answer immediately.
-					ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-				    } else {
-					// for chrome we need to wait until all candidates have been gathered or it will not consider TCP candidates reliably.
-					peer_connection.onicecandidate = function(event) {
-					    if (!event.candidate) {
-						ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
-					    }
-					}
-				    }
+				    ws.send(JSON.stringify({messageType:"SDP_response", status: 200, reason: "OK", sdp: sessionDescription.sdp, transactionID: transactionID}));
 				},
 				function() {
 				    console.log("setLocalSessionDescription: ERROR");
@@ -232,15 +210,31 @@ angular.module('ahoyApp.services', [])
       }
       this.muteAudio = function(mute) {
       	if (localMember.stream != null) {
-	    if (webrtcDetectedBrowser == "chrome") {
-    		if (localMember.stream.getAudioTracks().length == 1) {
-    		    localMember.stream.getAudioTracks()[0].enabled = !mute;
-    		}
-	    } else if (webrtcDetectedBrowser == "firefox") {
-		// currently firefox does not support this
+    	    if (localMember.stream.getAudioTracks().length == 1) {
+    		localMember.stream.getAudioTracks()[0].enabled = !mute;
 	    }
     	}
         preferences.muteAudio = mute;
+      }
+      this.isAbleToMuteMic = function() {
+      	if (localMember.stream != null) {
+      	    if (localMember.stream.getAudioTracks != undefined) {
+    		if (localMember.stream.getAudioTracks().length == 1) {
+    		    return true;
+		}
+	    }
+    	}
+    	return false;
+      }
+      this.isAbleToMuteCam = function() {
+      	if (localMember.stream != null) {
+      	    if (localMember.stream.getVideoTracks != undefined) {
+    		if (localMember.stream.getVideoTracks().length == 1) {
+    		    return true;
+		}
+	    }
+    	}
+    	return false;
       }
 
       this.sharingVideo = function() {
@@ -251,13 +245,9 @@ angular.module('ahoyApp.services', [])
       }
       this.muteVideo = function(mute) {
       	if (localMember.stream != null) {
-	    if (webrtcDetectedBrowser == "chrome") {
-    		if (localMember.stream.getVideoTracks().length == 1) {
-    		    localMember.stream.getVideoTracks()[0].enabled = !mute;
-    		}
-	    } else if (webrtcDetectedBrowser == "firefox") {
-		// currently firefox does not support this
-	    }
+    	    if (localMember.stream.getVideoTracks().length == 1) {
+    		localMember.stream.getVideoTracks()[0].enabled = !mute;
+    	    }
     	}
         preferences.muteVideo = mute;
       }
@@ -351,7 +341,7 @@ angular.module('ahoyApp.services', [])
         	}
             }
             if (!newSpeakerID) {
-              /* fall back to starint at ourself */
+              /* fall back to staring at ourself */
               newSpeakerID = localMember.memberID;
             }
         }
@@ -453,7 +443,6 @@ angular.module('ahoyApp.services', [])
     	    	    localMember.allowCameraControl = true;
     	    	    localMember.haveCameraControl = false;
 	            members[localMember.memberID] = localMember;
-	            console.log("members: "+JSON.stringify(members));
 
 		    activeConference = true;
 		    if (subscribingMedia) {
@@ -512,7 +501,7 @@ angular.module('ahoyApp.services', [])
     	    	  member.allowCameraControl = false;
     		  member.micMuted = msg.member.audio.muted;
 	          members[member.memberID] = member;
-	          console.log("members: "+JSON.stringify(members));
+
 	          if (scopeListener != null) {
 	    	    scopeListener();
 	          }
@@ -741,7 +730,7 @@ angular.module('ahoyApp.services', [])
 	  if (video && member.video && member.video.available) {
 	    msg.video = true;
 	  }
-	  console.log("SUBSCRIBING to "+member.name+" ("+member.memberID+") audio "+JSON.stringify(member.audio)+" video "+JSON.stringify(member.video));
+//	  console.log("SUBSCRIBING to "+member.name+" ("+member.memberID+") audio "+JSON.stringify(member.audio)+" video "+JSON.stringify(member.video));
 	  ws.send(JSON.stringify({messageType:"MEDIA_request", members: [msg], transactionID: generateTransactionID()}));
       }
 
