@@ -680,14 +680,19 @@ angular.module('ahoyApp.controllers', [])
     ahoyService.registerConferenceEventListener(function(msg) {
       switch (msg.messageType) {
         case "STREAM_ADDED_event":
+	    $timeout(function() {
+    	        $scope.$apply(function() {
+    	    	    var audio = document.getElementById('audio-'+msg.memberID);
+    	    	    if (audio) {
+    			console.log("attaching stream to audio "+msg.memberID);
+    			attachMediaStream(audio, msg.stream);
+    	    	    }
+    	    	});
+    	    }, 1);
     	    if (msg.memberID == bigScreenMemberID) {
     		bigScreenMemberID = null;
     		putOnBigScreen(msg.memberID);
     	    }
-	    $timeout(function() {
-    	        $scope.$apply(function() {
-    	    	});
-    	    }, 1);
           break;
         case "SPEAKER_CHANGED_event":
 	    putOnBigScreen(msg.memberID);
@@ -702,9 +707,7 @@ angular.module('ahoyApp.controllers', [])
       }, 1);
     }
 
-    ahoyService.registerScopeListener(function(msg) {
-	scopeApply();
-    });
+    ahoyService.registerScopeListener(scopeApply);
 
     var bigScreenMemberID = "";
     var bigScreen = document.getElementById('bigScreen');
@@ -735,6 +738,7 @@ angular.module('ahoyApp.controllers', [])
         	$scope.$apply(function() {
         	    bigScreen = document.getElementById('bigScreen');
         	    attachMediaStream(bigScreen, member.stream);
+        	    bigScreen.muted = true;
         	});
     	    }, 1);
 
@@ -750,6 +754,11 @@ angular.module('ahoyApp.controllers', [])
 	    window.onbeforeunload = function() {
 		ahoyService.leaveConference();
 	    }
+	    $timeout(function() {
+		$scope.$apply(function() {
+		    $scope.members = ahoyService.getMembers();
+		});
+	    }, 1);
 	    ahoyService.subscribeMedia();
 	  },
 	  function(status, reconnect) {

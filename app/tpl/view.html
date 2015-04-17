@@ -7,7 +7,12 @@
 		</div>
 	</div>
 	<div style="width: 100%; height: 100%;">
-	    <video id="bigScreen" width="100%" height="100%" autoplay muted/>
+	    <video id="bigScreen" width="100%" height="100%" autoplay muted />
 	</div>
     </div>
 </div>
+
+
+<audio ng-repeat="(memberID, member) in members track by memberID" id='audio-{{member.memberID}}' autoplay >
+</audio>
+
