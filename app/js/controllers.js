@@ -490,9 +490,9 @@ angular.module('ahoyApp.controllers', [])
         	$scope.$apply(function() {
         	    bigScreen = document.getElementById('bigScreen');
         	    attachMediaStream(bigScreen, member.stream);
+        	    bigScreen.muted = true;
         	});
     	    }, 1);
-
           });
         }, 1);
       }
