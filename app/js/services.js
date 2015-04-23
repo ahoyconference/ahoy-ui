@@ -197,7 +197,6 @@ angular.module('ahoyApp.services', [])
 	    }
 	};
 
-
       this.inConference = function() {
         return activeConference;
       }
@@ -362,7 +361,10 @@ angular.module('ahoyApp.services', [])
         return self.transmitOnly;
       }
 
-      this.joinConference = function(room, name, password, transmitOnly, captureHdVideo, successCallback, errorCallback) {
+      this.joinConference = function(url, room, name, password, transmitOnly, captureHdVideo, successCallback, errorCallback) {
+	if (url != null) {
+	    wsUrl = url;
+	}
         preferences.name = name;
         self.transmitOnly = transmitOnly;
         preferences.captureHdVideo = captureHdVideo;
@@ -890,7 +892,10 @@ angular.module('ahoyApp.services', [])
     this.kickMember = function(member) {
 	ws.send(JSON.stringify({messageType:"CONFERENCE_KICK_request", memberID: member.memberID, transactionID: generateTransactionID()}));
     }
-      
+
+    this.getLinkToken = function() {
+	return btoa(JSON.stringify({ wsUrl: wsUrl, room: preferences.conferenceID }));
+    }
 
     this.getEndsAt = function() {
 	if (preferences.endDate) {

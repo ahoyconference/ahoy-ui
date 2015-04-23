@@ -19,7 +19,7 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.joinConference = function() {
 	console.log('join: '+$scope.room);
-	ahoyService.joinConference($scope.room, $scope.name, $scope.password, $scope.transmitOnly, $scope.captureHdVideo,
+	ahoyService.joinConference(null, $scope.room, $scope.name, $scope.password, $scope.transmitOnly, $scope.captureHdVideo,
 	  function(ws, speaker) {
 	    console.log("yes!");
 	    $translate("conference.onbeforeunload").then(function (translation) {
@@ -67,6 +67,91 @@ angular.module('ahoyApp.controllers', [])
     
   }])
 
+  .controller('LinkCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', 'AHOY_CONFIG', function($scope, $state, $stateParams, $timeout, $translate, ahoyService, AHOY_CONFIG) {
+    console.log('LinkCtrl token: ' + $stateParams.token);
+    var link = null;
+    if ($stateParams.token != undefined) {
+	var token = $stateParams.token;
+	var data = atob(token);
+	if (data != null) {
+	    try {
+		link = JSON.parse(data);
+	    } catch (error) {
+	    }
+	}
+    }
+    if (!link || !link.wsUrl || !link.room) {
+	$state.transitionTo("join");
+	return;
+    }
+    $scope.wsUrl = link.wsUrl;
+    $scope.room = link.room;
+    $scope.name = link.name;
+    $scope.password = link.password;
+
+    if ($stateParams.lang) {
+	$translate.use($stateParams.lang);
+    }
+    if (ahoyService.inConference() == true) {
+      $state.transitionTo('conference');
+      return;
+    }
+
+    $scope.AHOY_CONFIG = AHOY_CONFIG;
+    $scope.transmitOnly = false;
+    $scope.captureHdVideo = false;
+    
+    $scope.joinConference = function() {
+	console.log('join: '+$scope.room);
+	ahoyService.joinConference($scope.wsUrl, $scope.room, $scope.name, $scope.password, $scope.transmitOnly, $scope.captureHdVideo,
+	  function(ws, speaker) {
+	    console.log("yes!");
+	    $translate("conference.onbeforeunload").then(function (translation) {
+	      window.onbeforeunload = function() {
+	        return translation; 
+	      }
+	    });
+	    if (speaker) {
+		if (AdapterJS.onwebrtcreadyDone) {
+		    $state.transitionTo('mediasharing');
+		} else {
+		    $state.transitionTo('nousermedia_plugin');
+		}
+	    } else {
+		$state.transitionTo('conference');
+	    }
+	  },
+	  function(status, reconnect) {
+	    $scope.wsUrl = null;
+	    if (status == 404) {
+		ahoyService.showErrorDialog($scope, "join.unknown_conference_title", "join.unknown_conference_text");
+	    } else if (status == 403) {
+		ahoyService.showErrorDialog($scope, "join.wrong_password_title", "join.wrong_password_text");
+	        $scope.$apply(function() {
+	          $scope.password = "";
+	        });
+	    } else if (status == 470) {
+		ahoyService.showErrorDialog($scope, "join.conference_locked_title", "join.conference_locked_text");
+	    } else if (status == 486) {
+		ahoyService.showErrorDialog($scope, "join.conference_full_title", "join.conference_full_text");
+	    } else if (status == 302) {
+	      console.log("redirecting...");
+	      $timeout(function() {
+	        $scope.joinConference();
+	      }, 500);
+	    } else if (reconnect) {
+	      console.log("please reconnect");
+	      $timeout(function() {
+	        $scope.joinConference();
+	      }, 500);
+	    }
+	    console.log("onerror: "+status+" "+reconnect);
+	  }
+	);
+    };
+    
+  }])
+
   .controller('StartCtrl', ['$scope', '$timeout', '$state', '$stateParams', '$translate', 'ahoyService', function($scope, $timeout, $state, $stateParams, $translate, ahoyService) {
     console.log('StartCtrl language: ' + $stateParams.lang);
     if ($stateParams.lang) {
@@ -78,7 +163,7 @@ angular.module('ahoyApp.controllers', [])
     }
 
     $scope.joinConference = function() {
-	ahoyService.joinConference($scope.conferenceID, $scope.name, $scope.password, false, false,
+	ahoyService.joinConference(null, $scope.conferenceID, $scope.name, $scope.password, false, false,
 	    function(ws, speaker) {
 		$translate("conference.onbeforeunload").then(function (translation) {
 		    window.onbeforeunload = function() {
@@ -522,7 +607,7 @@ angular.module('ahoyApp.controllers', [])
     
     $scope.showConferenceLink = function() {
 	console.log("showConferenceLink");
-	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/join/" + escape($scope.preferences.conferenceID) + "?lang="+$translate.use();
+	$scope.conferenceLink= document.location.href.substring(0,document.location.href.indexOf("/#/conference")) + "/#/link/" + ahoyService.getLinkToken();
 	var modalInstance = $modal.open({
 	    templateUrl: 'tpl/showLinkModal.html',
 	    size: "lg",
@@ -749,7 +834,7 @@ angular.module('ahoyApp.controllers', [])
     }
 
     $scope.joinConference = function() {
-      ahoyService.joinConference($scope.room, $scope.name, null, false, false,
+      ahoyService.joinConference(null, $scope.room, $scope.name, null, false, false,
 	  function(ws, speaker) {
 	    window.onbeforeunload = function() {
 		ahoyService.leaveConference();

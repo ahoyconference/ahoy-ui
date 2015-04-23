@@ -3,7 +3,7 @@
         </div>
         <div class="modal-body">
     	    {{ 'link.share_link_to_invite_guests' | translate }}:<br><br>
-    	    {{conferenceLink}}
+    	    <textarea style="width: 100%;" ng-model="conferenceLink"></textarea>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="hideConferenceLink()" translate="button.close">Close</button>

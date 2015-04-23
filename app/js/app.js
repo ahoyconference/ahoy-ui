@@ -3,6 +3,8 @@
 
 angular.module('ahoyApp', [
   'ahoyApp.config',
+  'ahoyApp.directives',
+  'ahoyApp.factories',
   'ahoyApp.services',
   'ahoyApp.controllers',
   'ui.router',
@@ -52,6 +54,12 @@ angular.module('ahoyApp', [
           url: '/join?lang',
           templateUrl: 'tpl/join.html',
           controller: 'JoinCtrl'
+        })
+
+        .state("link", {
+          url: '/link/:token',
+          templateUrl: 'tpl/join.html',
+          controller: 'LinkCtrl'
         })
 
         .state("mediasharing", {
