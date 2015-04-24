@@ -20,6 +20,7 @@ angular.module('ahoyApp.services', [])
       preferences.moderator = false;
       preferences.muteVideo = false;
       preferences.muteAudio = false;
+      preferences.iceServers = null;
       
       var scopeListener = null;
       var chatMessageListener = null;
@@ -98,6 +99,9 @@ angular.module('ahoyApp.services', [])
 		var pc_config = null;
 		if (AHOY_CONFIG.iceServers != undefined) {
 		    pc_config = { iceServers: AHOY_CONFIG.iceServers };
+		}
+		if (preferences.iceServers != null) {
+		    pc_config = { iceServers: preferences.iceServers };
 		}
 		if (webrtcDetectedBrowser == "firefox") {
 		    peer_connection = new RTCPeerConnection(pc_config);
@@ -416,6 +420,11 @@ angular.module('ahoyApp.services', [])
 		    preferences.moderator = msg.moderator;
 		    preferences.conferenceLocked = msg.locked;
 		    speakerID = msg.speakerID;
+		    if (msg.iceServers) {
+			preferences.iceServers = msg.iceServers;
+		    } else {
+			preferences.iceServers = null;
+		    }
 		    
 		    if (msg.remainingSeconds > 0) {
 			var nowDate = new Date();
