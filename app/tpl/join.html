@@ -9,15 +9,15 @@
 		<fieldset>
 		<div class="form-group">
 		    <label for="name-input" class="control-label" translate="join.your_name">Your name</label>
-	    	    <input type="text" class="form-control name-input" placeholder="{{ 'join.your_name_placeholder' | translate }}" ng-model="name" value="{{name}}" required>
+	    	    <input type="text" class="form-control name-input" placeholder="{{ 'join.your_name_placeholder' | translate }}" ng-model="name" value="{{name}}" required autocapitalize="off" autocorrect="off" autocomplete="off">
 		</div>
 		<div class="form-group">
 		    <label for="room-input" class="control-label" translate="join.conference_room">Conference ID</label>
-	    	    <input type="text" class="form-control room-input" placeholder="{{ 'join.conference_room_placeholder' | translate }}" ng-model="room" value="{{room}}" required>
+	    	    <input type="text" class="form-control room-input" placeholder="{{ 'join.conference_room_placeholder' | translate }}" ng-model="room" value="{{room}}" required autocapitalize="off" autocorrect="off" autocomplete="off">
 		</div>
 		<div class="form-group">
 		    <label for="password-input" class="control-label" translate="join.password">Password</label>
-		    <input type="password" class="form-control password-input" placeholder="{{ 'join.password_placeholder' | translate }}" ng-model="password" value="">
+		    <input type="password" class="form-control password-input" placeholder="{{ 'join.password_placeholder' | translate }}" ng-model="password" value="" autocapitalize="off" autocorrect="off" autocomplete="off">
 		</div>
 		<div class="form-group">
 		    <button class="btn btn-primary btn-block" ng-disabled="form.$invalid" translate="button.next">Next</button>

@@ -10,7 +10,7 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css"/>
-  <meta smart-banner >
+  <meta sfmart-banner />
 </head>
 <body>
   <!--[if lt IE 7]>
@@ -19,5 +19,13 @@
   <div ui-view class="container"></div>
   <script src="js/app.js"></script>
   <script src="config.js"></script>
+  <script language="JavaScript">
+    deeplink.setup({
+	iOS: {
+    	    appName: "AhoyConference",
+    	    appId: "973996885"
+	}
+    });
+  </script>
 </body>
 </html>

@@ -18,7 +18,12 @@ angular.module('ahoyApp.controllers', [])
     $scope.name = $stateParams.name;
     
     $scope.joinConference = function() {
-	console.log('join: '+$scope.room);
+	if(!!navigator.platform.match(/^iPad/i)) {
+	    var url = "ahoyconference://join/"+btoa(JSON.stringify({ wsUrl: ahoyService.getWsUrl(), room: $scope.room, name: $scope.name, password: $scope.password  }));
+	    deeplink.open(url);
+	    return;
+	}
+	
 	ahoyService.joinConference(null, $scope.room, $scope.name, $scope.password, $scope.transmitOnly, $scope.captureHdVideo,
 	  function(ws, speaker) {
 	    console.log("yes!");
@@ -71,13 +76,13 @@ angular.module('ahoyApp.controllers', [])
     console.log('LinkCtrl token: ' + $stateParams.token);
     var link = null;
     if ($stateParams.token != undefined) {
-	var token = $stateParams.token;
-	var data = atob(token);
-	if (data != null) {
-	    try {
+	try {
+	    var token = $stateParams.token;
+	    var data = atob(token);
+	    if (data != null) {
 		link = JSON.parse(data);
-	    } catch (error) {
 	    }
+	} catch (error) {
 	}
     }
     if (!link || !link.wsUrl || !link.room) {
@@ -188,6 +193,13 @@ angular.module('ahoyApp.controllers', [])
     }
 
     $scope.startConference = function() {
+	if(!!navigator.platform.match(/^iPad/i)) {
+	    var url = "ahoyconference://start/"+btoa(JSON.stringify({ wsUrl: ahoyService.getWsUrl(), room: $scope.room, name: $scope.name, password: $scope.password, moderatorpassword: $scope.moderatorpassword  }));
+	    deeplink.open(url);
+	    return;
+	}
+
+
 	ahoyService.startConference($scope.room, $scope.name, $scope.password, $scope.moderatorpassword,
 	  function(conferenceID) {
 	    $scope.$apply(function() {

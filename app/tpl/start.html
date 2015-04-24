@@ -9,18 +9,18 @@
 		<fieldset>
 		<div class="form-group">
 		    <label for="name-input" class="control-label" translate="start.your_name">Your name</label>
-	    	    <input type="text" class="form-control name-input" placeholder="{{ 'start.your_name_placeholder' | translate }}" ng-model="name" required autofocus>
+	    	    <input type="text" class="form-control name-input" placeholder="{{ 'start.your_name_placeholder' | translate }}" ng-model="name" required autofocus autocapitalize="off" autocorrect="off" autocomplete="off">
 		</div>
 		<div class="form-group">
 		    <label for="room-input" class="control-label" translate="start.conference_room">Conference Room</label>
-	    	    <input type="text" class="form-control room-input" placeholder="{{ 'start.conference_room_placeholder' | translate }}" ng-model="room">
+	    	    <input type="text" class="form-control room-input" placeholder="{{ 'start.conference_room_placeholder' | translate }}" ng-model="room" autocapitalize="off" autocorrect="off" autocomplete="off">
 		</div>
 		<div class="alert alert-danger ng-hide" ng-show="roomExists" translate="start.conference_room_exists">
 		    Conference room exists
 		</div>
 		<div class="form-group">
 		    <label for="password-input" class="control-label" translate="start.password">Password</label>
-		    <input type="password" class="form-control password-input" placeholder="{{ 'start.password_placeholder' | translate }}" ng-model="password">
+		    <input type="password" class="form-control password-input" placeholder="{{ 'start.password_placeholder' | translate }}" ng-model="password" autocapitalize="off" autocorrect="off" autocomplete="off">
 		</div>
 		<div class="form-group">
 		    <label for="password-input" class="control-label" translate="start.moderator_password">Moderator Password</label>

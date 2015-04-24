@@ -896,6 +896,20 @@ angular.module('ahoyApp.services', [])
     this.getLinkToken = function() {
 	return btoa(JSON.stringify({ wsUrl: wsUrl, room: preferences.conferenceID }));
     }
+    
+    this.getWsUrl = function() {
+	var url = null;
+        if (AHOY_CONFIG.wsUrl) {
+    	    url = AHOY_CONFIG.wsUrl;
+        } else {
+    	    if (document.location.href.indexOf("ttp://") > 0) {
+		url = "ws://"+document.location.href.substring(7, document.location.href.indexOf("/", 7));
+	    } else if (document.location.href.indexOf("ttps://") > 0) {
+    		url = "wss://"+document.location.href.substring(8, document.location.href.indexOf("/", 8));
+    	    }
+        }
+        return url;
+    }
 
     this.getEndsAt = function() {
 	if (preferences.endDate) {

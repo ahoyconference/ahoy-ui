@@ -993,7 +993,11 @@ if (navigator.mozGetUserMedia) {
 
       AdapterJS.WebRTCPlugin.renderNotificationBar(popupString, 'Install Now', downloadLink);
     } else { // no download link, just print a generic explanation
-      AdapterJS.WebRTCPlugin.renderNotificationBar('Your browser does not support WebRTC.');
+	if(!!navigator.platform.match(/^iPad/i)) {
+	    // do not show banner, link to itunes instead
+	} else {
+    	    AdapterJS.WebRTCPlugin.renderNotificationBar('Your browser does not support WebRTC. You will be limited to text chat.');
+    	}
     }
   };
 
