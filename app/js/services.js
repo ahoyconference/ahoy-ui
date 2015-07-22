@@ -647,6 +647,301 @@ angular.module('ahoyApp.services', [])
 	}
       }
 
+      this.joinConferenceWithInvitation = function(url, invitation, name, transmitOnly, captureHdVideo, successCallback, errorCallback) {
+	if (url != null) {
+	    wsUrl = url;
+	}
+	preferences.name = "";
+	if (invitation.name) {
+	    if (invitation.name.screen) {
+	        preferences.name = invitation.name.screen;
+	    } else {
+		if (invitation.name.first) {
+		    preferences.name = invitation.name.first;
+		}
+		if (invitation.name.last) {
+		    preferences.name += " " + invitation.name.last;
+		}
+		
+	    }
+	} else {
+	    preferences.name = name;
+	}
+        self.transmitOnly = transmitOnly;
+        preferences.captureHdVideo = captureHdVideo;
+        localMember = {};
+        members = {};
+	ws = new WebSocket(wsUrl, "conference-protocol");
+	try {
+	    ws.onopen = function() {
+	      console.log("onopen: connected to "+wsUrl);
+	      ws.send(JSON.stringify({messageType:"CONFERENCE_JOIN_request", invitation: invitation, name: preferences.name, transactionID: generateTransactionID()}));
+	    } 
+
+	   ws.onclose = function(error){
+	     resetWsUrl();
+	     if (activeConference) {
+	       for (var memberID in members) {
+		  if (members[memberID] != null) {
+		    if (members[memberID].peerConnection != null) {
+			members[memberID].peerConnection.close();
+			members[memberID].peerConnection = null;
+		    }
+		    if (members[memberID].stream != null) {
+			members[memberID].stream.stop();
+			members[memberID].stream = null;
+		    }
+		    delete members[memberID];
+	    	  }
+	       }
+	       activeConference = false;
+	       document.location.reload();
+	     } else {
+               errorCallback(500, false);
+             }
+	   }
+
+	   ws.onmessage = function(message) {
+	      var msg = JSON.parse(message.data);
+	      switch (msg.messageType) {
+	        case "CONFERENCE_JOIN_response":
+		  if (msg.status == 200) {
+		    if (msg.conferenceName && msg.conferenceName.length) {
+			preferences.room = msg.conferenceName;
+		    } else {
+			preferences.room = msg.conferenceID;
+		    }
+		    preferences.conferenceID = msg.conferenceID;
+		    preferences.speaker = msg.speaker;
+		    preferences.moderator = msg.moderator;
+		    preferences.conferenceLocked = msg.locked;
+		    speakerID = msg.speakerID;
+		    if (msg.iceServers) {
+			preferences.iceServers = msg.iceServers;
+		    } else {
+			preferences.iceServers = null;
+		    }
+		    
+		    if (msg.remainingSeconds > 0) {
+			var nowDate = new Date();
+			preferences.endDate = new Date((msg.remainingSeconds * 1000) + nowDate.getTime());
+		    } else {
+		        preferences.endDate = null;
+		    }
+
+		    for (var key in msg.members) {
+			members[msg.members[key].memberID] = msg.members[key];
+			members[msg.members[key].memberID].peerConnection = null;
+			members[msg.members[key].memberID].stream = null;
+			members[msg.members[key].memberID].micMuted = msg.members[key].audio.muted;
+			members[msg.members[key].memberID].muted = false;
+			members[msg.members[key].memberID].mirror = false;
+    	    		members[msg.members[key].memberID].allowCameraControl = false;
+    	    		members[msg.members[key].memberID].haveCameraControl = false;
+		    }
+		    localMember.memberID = msg.memberID;
+		    localMember.name = preferences.name;
+		    localMember.speaker = msg.speaker;
+		    localMember.moderator = msg.moderator;
+		    localMember.peerConnection = null;
+		    localMember.muted = true;
+		    localMember.mirror = true;
+		    localMember.micMuted = false;
+    	    	    localMember.allowCameraControl = true;
+    	    	    localMember.haveCameraControl = false;
+	            members[localMember.memberID] = localMember;
+
+		    activeConference = true;
+		    if (subscribingMedia) {
+			sendMediaRequest(members);
+		    }
+		    if (activeMedia) {
+		      self.publishMedia();
+		    } else {
+		      successCallback(ws, msg.speaker);
+		    }
+		  } else if (msg.status == 302) {
+		    wsUrl = msg.url;
+		    preferences.wsUrl = wsUrl;
+		    ws.onclose = null;
+		    ws.close();
+		    ws = null;
+		    errorCallback(msg.status, true);
+		  } else {
+		    resetWsUrl();
+		    activeConference = false;
+		    ws.close();
+		    ws = null;
+		    errorCallback(msg.status, false);
+		  }
+		  break;
+		case "CONFERENCE_KICK_indication":
+		  document.location.reload();
+		  break;
+	        case "CONFERENCE_LOCK_indication":
+	    	  preferences.conferenceLocked = msg.locked;
+	          if (scopeListener != null) {
+	    	    scopeListener();
+	          }
+	          if (statusMessageListener != null) {
+	            $translate("conference.room_" + (msg.locked?"locked":"unlocked")).then(function (translation) {
+	              var event = { text: translation };
+	    	      statusMessageListener(event);
+	            });
+	          }
+	    	  break;
+		case "MEDIA_RECEIVE_request":
+		  var call_peer_sdp = unescape(msg.sdp);
+		  console.log("MEDIA_RECEIVE_request: "+call_peer_sdp);
+		  localMember.peerConnection = createPeerConnection(null);
+		  localMember.peerConnection.addStream(localMember.stream);
+		  createSdpAnswer(localMember.peerConnection, msg.transactionID, call_peer_sdp);
+		  break;
+	        case "CONFERENCE_JOIN_indication":
+	          var member = {};
+	          member.memberID = msg.member.memberID;
+	          member.name = msg.member.name;
+	          member.speaker = msg.member.speaker;
+	          member.moderator = msg.member.moderator;
+    	    	  member.muted = false;
+    	    	  member.mirror = false;
+    	    	  member.allowCameraControl = false;
+    		  member.micMuted = msg.member.audio.muted;
+	          members[member.memberID] = member;
+	          if (scopeListener != null) {
+	    	    scopeListener();
+	          }
+	          if (conferenceEventListener != null) {
+	    	    conferenceEventListener(msg);
+	          }
+	          if (statusMessageListener != null) {
+	            $translate("conference.member_join").then(function (translation) {
+	              var event = { text: msg.member.name + " " + translation };
+	    	      statusMessageListener(event);
+	            });
+	          }
+		  break;
+		case "CONFERENCE_LEAVE_indication":
+		  if (members[msg.member.memberID] != null) {
+		    if (members[msg.member.memberID].peerConnection != null) {
+			members[msg.member.memberID].peerConnection.close();
+			members[msg.member.memberID].peerConnection = null;
+		    }
+		    if (members[msg.member.memberID].stream != null) {
+			if (webrtcDetectedBrowser == "chrome") {
+			    members[msg.member.memberID].stream.stop();
+			}
+			members[msg.member.memberID].stream = null;
+		    }
+		    delete members[msg.member.memberID];
+	            if (scopeListener != null) {
+	    	      scopeListener();
+	            }
+	            if (statusMessageListener != null) {
+	              $translate("conference.member_leave").then(function (translation) {
+	                var event = { text: msg.member.name + " " + translation };
+	    	        statusMessageListener(event);
+		      });
+	            }
+	            electSpeaker();
+		  }
+		  break;
+		case "SDP_request":
+		  if (members[msg.member.memberID].peerConnection != null) {
+		    destroyPeerConnection(members[msg.member.memberID].peerConnection);
+		    members[msg.member.memberID].peerConnection = null;
+		  }
+		  var call_peer_sdp = unescape(msg.sdp);
+		  
+		  members[msg.member.memberID].peerConnection= createPeerConnection(msg.member.memberID);
+		  createSdpAnswer(members[msg.member.memberID].peerConnection, msg.transactionID, call_peer_sdp);
+		  break;
+	        case "CHAT_MESSAGE_indication":
+	    	  try {
+	    	    var json_msg = JSON.parse(msg.message.text);
+	    	    if (json_msg.control) {
+	    		if (json_msg.control.cameraControl) {
+	    		    if (members[msg.from.memberID]) {
+	    			members[msg.from.memberID].haveCameraControl = true;
+	    			members[msg.from.memberID].allowCameraControl = json_msg.control.cameraControl.allow;
+	        		if (scopeListener != null) {
+	    			    scopeListener();
+	        		}
+	    		    }
+	    		} else if (json_msg.control.camera) {
+	    		
+	    		}
+	        	if (controlMessageListener != null) {
+	            	    controlMessageListener(msg);
+	        	}
+	    	     } else if (json_msg.chat) {
+	        	if (chatMessageListener != null) {
+	            	    chatMessageListener(msg);
+	        	}
+	    	    }
+	          } catch (error) {
+	          }
+	          break;
+	        case "MEDIA_event":
+		  switch (msg.event) {
+		    case "start_speaking":
+	    	      speakerID = msg.member.memberID;
+		      if (localMember.memberID != msg.member.memberID) {
+		        if (conferenceEventListener != null) {
+			  var msg = {};
+			  msg.messageType = "SPEAKER_CHANGED_event";
+			  msg.force = false;
+			  msg.member = {};
+			  msg.memberID = members[speakerID].memberID;
+			  msg.name = members[speakerID].name;
+			  conferenceEventListener(msg);
+			}
+		      }
+	    	      break;
+		    case "audio_muted":
+			if (mediaEventListener != null) {
+			  if (members[msg.member.memberID]) {
+			    members[msg.member.memberID].micMuted = true;
+	        	    mediaEventListener(msg);
+			  }
+			}
+		      break;
+		    case "audio_unmuted":
+			if (mediaEventListener != null) {
+			  if (members[msg.member.memberID]) {
+			    members[msg.member.memberID].micMuted = false;
+	        	    mediaEventListener(msg);
+			  }
+			}
+		      break;
+	          }
+	          break;
+	        case "MEDIA_indication":
+		    if (members[msg.member.memberID]) {
+		      members[msg.member.memberID].audio = msg.audio;
+		      members[msg.member.memberID].video = msg.video;
+    		      members[msg.member.memberID].micMuted = msg.audio.muted;
+
+		      if (subscribingMedia) {
+		        sendMediaRequest(new Array({"memberID": msg.member.memberID, "audio": msg.audio, "video": msg.video}));
+		      }
+	              if (statusMessageListener != null) {
+	                $translate("conference.member_started_media").then(function (translation) {
+	                  var event = { text: msg.member.name + " " + translation };
+	    	          statusMessageListener(event);
+		        });
+	              }
+		    }
+	          break;
+	      }
+	    }
+
+	} catch(exception) {
+	  ws = null;
+	  errorCallback(500, false);
+	}
+      }
+
       this.startConference = function(room, name, password, moderatorpassword, successCallback, errorCallback) {
 	ws = new WebSocket(wsUrl, "conference-protocol");
 	try {

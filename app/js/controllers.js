@@ -107,6 +107,12 @@ angular.module('ahoyApp.controllers', [])
     $scope.captureHdVideo = false;
     
     $scope.joinConference = function() {
+	if(!!navigator.platform.match(/^iPad/i)) {
+	    var url = "ahoyconference://join/"+btoa(JSON.stringify({ wsUrl: $scope.wsUrl, room: $scope.room, name: $scope.name, password: $scope.password  }));
+	    deeplink.open(url);
+	    return;
+	}
+
 	console.log('join: '+$scope.room);
 	ahoyService.joinConference($scope.wsUrl, $scope.room, $scope.name, $scope.password, $scope.transmitOnly, $scope.captureHdVideo,
 	  function(ws, speaker) {
@@ -155,6 +161,96 @@ angular.module('ahoyApp.controllers', [])
 	);
     };
     
+  }])
+
+  .controller('InvitationCtrl', ['$scope', '$state', '$stateParams', '$timeout', '$translate', 'ahoyService', 'AHOY_CONFIG', function($scope, $state, $stateParams, $timeout, $translate, ahoyService, AHOY_CONFIG) {
+    console.log('InvitationCtrl token: ' + $stateParams.token);
+    var link = null;
+    if ($stateParams.token != undefined) {
+	try {
+	    var token = $stateParams.token;
+	    var data = atob(token);
+	    if (data != null) {
+		link = JSON.parse(data);
+		console.log(link);
+	    }
+	} catch (error) {
+	}
+    }
+    if (!link || !link.wsUrl || !link.invitation) {
+	$state.transitionTo("join");
+	return;
+    }
+/*
+    if(!!navigator.platform.match(/^iPad/i)) {
+	var url = "ahoyconference://invitation/"+token;
+	deeplink.open(url);
+	return;
+    }
+*/
+
+    $scope.wsUrl = link.wsUrl;
+    $scope.invitation = link.invitation;
+
+    if ($stateParams.lang) {
+	$translate.use($stateParams.lang);
+    }
+    if (ahoyService.inConference() == true) {
+      $state.transitionTo('conference');
+      return;
+    }
+
+    $scope.AHOY_CONFIG = AHOY_CONFIG;
+    $scope.transmitOnly = false;
+    $scope.captureHdVideo = false;
+    
+    $scope.joinConference = function() {
+	ahoyService.joinConferenceWithInvitation($scope.wsUrl, $scope.invitation, $scope.name, $scope.transmitOnly, $scope.captureHdVideo,
+	  function(ws, speaker) {
+	    $translate("conference.onbeforeunload").then(function (translation) {
+	      window.onbeforeunload = function() {
+	        return translation; 
+	      }
+	    });
+	    if (speaker) {
+		if (AdapterJS.onwebrtcreadyDone) {
+		    $state.transitionTo('mediasharing');
+		} else {
+		    $state.transitionTo('nousermedia_plugin');
+		}
+	    } else {
+		$state.transitionTo('conference');
+	    }
+	  },
+	  function(status, reconnect) {
+	    $scope.wsUrl = null;
+	    if (status == 404) {
+		ahoyService.showErrorDialog($scope, "join.unknown_conference_title", "join.unknown_conference_text");
+	    } else if (status == 403) {
+		ahoyService.showErrorDialog($scope, "join.wrong_password_title", "join.wrong_password_text");
+	        $scope.$apply(function() {
+	          $scope.password = "";
+	        });
+	    } else if (status == 470) {
+		ahoyService.showErrorDialog($scope, "join.conference_locked_title", "join.conference_locked_text");
+	    } else if (status == 486) {
+		ahoyService.showErrorDialog($scope, "join.conference_full_title", "join.conference_full_text");
+	    } else if (status == 302) {
+	      console.log("redirecting...");
+	      $timeout(function() {
+	        $scope.joinConference();
+	      }, 500);
+	    } else if (reconnect) {
+	      console.log("please reconnect");
+	      $timeout(function() {
+	        $scope.joinConference();
+	      }, 500);
+	    }
+	    console.log("onerror: "+status+" "+reconnect);
+	  }
+	);
+    };
+
   }])
 
   .controller('StartCtrl', ['$scope', '$timeout', '$state', '$stateParams', '$translate', 'ahoyService', function($scope, $timeout, $state, $stateParams, $translate, ahoyService) {

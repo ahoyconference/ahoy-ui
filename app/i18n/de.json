@@ -28,8 +28,8 @@
 	"unknown_conference_text": "Leider existiert diese Konferenz nicht.",
 	"conference_full_title": "Raum belegt",
 	"conference_full_text": "Leider ist dieser Konferenzraum voll.",
-	"conference_locked_title": "Raum verschloßen",
-	"conference_locked_text": "Dieser Raum wurde von einem Moderator verschloßen."
+	"conference_locked_title": "Raum verschlossen",
+	"conference_locked_text": "Dieser Raum wurde von einem Moderator verschlossen."
     },
     "mediashare": {
 	"mic_cam_sharing": "Mikrofon/Kamera Freigabe",
@@ -71,7 +71,7 @@
     },
     "conference": {
 	"room": "Raum",
-	"room_locked": "Die Konferenz wurde von einem Moderator verschloßen.",
+	"room_locked": "Die Konferenz wurde von einem Moderator verschlossen.",
 	"room_unlocked": "Die Konferenz wurde von einem Moderator geöffnet.",
 	"member_join": "hat die Konferenz betreten.",
 	"member_leave": "hat die Konferenz verlassen.",

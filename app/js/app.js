@@ -62,6 +62,12 @@ angular.module('ahoyApp', [
           controller: 'LinkCtrl'
         })
 
+        .state("invitation", {
+          url: '/invitation/:token',
+          templateUrl: 'tpl/invitation.html',
+          controller: 'InvitationCtrl'
+        })
+
         .state("mediasharing", {
           url: '/mediasharing',
           templateUrl: 'tpl/mediasharing.html',
