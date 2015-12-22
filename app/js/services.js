@@ -34,6 +34,20 @@ angular.module('ahoyApp.services', [])
 
       var ws = null;
       var wsUrl;
+      
+      function stopStream(stream) {
+	if (stream.active != undefined) {
+	  if (stream.active) {
+	    stream.getTracks().forEach(
+	      function(track) {
+	        track.stop();
+              }
+    	    );
+    	  }
+	} else {
+	  stream.stop();
+    	}
+      }
 
       function resetWsUrl() {
         if (AHOY_CONFIG.wsUrl) {
@@ -308,7 +322,7 @@ angular.module('ahoyApp.services', [])
     		}
     	        successCallback(stream);
     		if (localMember.stream != null) {
-        	  localMember.stream.stop();
+    		  stopStream(localMember.stream);
     		}
     	        localMember.stream = stream;
     	      },
@@ -324,7 +338,7 @@ angular.module('ahoyApp.services', [])
     	  preferences.shareAudio = false;
     	  preferences.shareVideo = false;
     	  if (localMember.stream != null) {
-            localMember.stream.stop();
+            stopStream(localMember.stream);
             localMember.stream = null;
     	  }
     	  successCallback(null);
@@ -391,7 +405,7 @@ angular.module('ahoyApp.services', [])
 			members[memberID].peerConnection = null;
 		    }
 		    if (members[memberID].stream != null) {
-			members[memberID].stream.stop();
+			stopStream(members[memberID].stream);
 			members[memberID].stream = null;
 		    }
 		    delete members[memberID];
@@ -533,9 +547,7 @@ angular.module('ahoyApp.services', [])
 			members[msg.member.memberID].peerConnection = null;
 		    }
 		    if (members[msg.member.memberID].stream != null) {
-			if (webrtcDetectedBrowser == "chrome") {
-			    members[msg.member.memberID].stream.stop();
-			}
+			stopStream(members[msg.member.memberID].stream);
 			members[msg.member.memberID].stream = null;
 		    }
 		    delete members[msg.member.memberID];
@@ -688,7 +700,7 @@ angular.module('ahoyApp.services', [])
 			members[memberID].peerConnection = null;
 		    }
 		    if (members[memberID].stream != null) {
-			members[memberID].stream.stop();
+			stopStream(members[memberID].stream);
 			members[memberID].stream = null;
 		    }
 		    delete members[memberID];
@@ -828,9 +840,7 @@ angular.module('ahoyApp.services', [])
 			members[msg.member.memberID].peerConnection = null;
 		    }
 		    if (members[msg.member.memberID].stream != null) {
-			if (webrtcDetectedBrowser == "chrome") {
-			    members[msg.member.memberID].stream.stop();
-			}
+			stopStream(members[msg.member.memberID].stream);
 			members[msg.member.memberID].stream = null;
 		    }
 		    delete members[msg.member.memberID];
@@ -1121,9 +1131,7 @@ angular.module('ahoyApp.services', [])
         preferences.muteAudio = false;
       
         if (localMember.stream) {
-    	  if (webrtcDetectedBrowser == "chrome") {
-            localMember.stream.stop();
-    	  }
+	  stopStream(localMember.stream);
           localMember.stream = null;
         }
         if (localMember.peerConnection) {
